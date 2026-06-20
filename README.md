@@ -127,6 +127,8 @@ Represents a photography offer published by a photographer.
 * `price`
 * `durationHours`
 * `isAvailable`
+* `photographer`
+* `coverPhoto`
 * `createdAt`
 * `updatedAt`
 

@@ -61,6 +61,10 @@ public class Offer {
     @JoinColumn(name = "photographer_id", nullable = false)
     private User photographer;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cover_photo_id", nullable = false)
+    private Photo coverPhoto;
+
     @OneToMany(mappedBy = "offer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Photo> photos = new ArrayList<>();
 
