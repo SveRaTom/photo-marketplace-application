@@ -30,7 +30,7 @@ public class Booking {
 
     @Future
     @Column(nullable = false)
-    private LocalDate bookingDate;
+    private LocalDate eventDate;
 
     @NotBlank
     @Size(max = 255)
@@ -42,7 +42,7 @@ public class Booking {
     private String notes;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false)
     private BookingStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)

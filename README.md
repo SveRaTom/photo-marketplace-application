@@ -111,6 +111,7 @@ A user can be either a photographer or a client.
 * `email`
 * `password`
 * `role`
+* `profileImageUrl`
 * `createdAt`
 * `updatedAt`
 
