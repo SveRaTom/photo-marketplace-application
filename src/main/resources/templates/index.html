@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/header :: head('LensMarket')}"></head>
+    <title>LensMarket</title>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<section class="hero">
+    <div class="container hero-content">
+        <h1>Find Your Perfect Photographer</h1>
+        <p>Browse professional photographers, book sessions and share experiences.</p>
+        <a th:href="@{/offers}" class="btn">Explore Offers</a>
+    </div>
+</section>
+
+<section class="features">
+    <div class="container">
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h3>Wedding Photography</h3>
+                <p>Capture unforgettable moments.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Portrait Sessions</h3>
+                <p>Professional personal photography.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Event Coverage</h3>
+                <p>Corporate and private events.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

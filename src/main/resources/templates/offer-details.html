@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Offer Details')}">
+    <title>Offer Details</title>
+</head>
+
+<body>
+
+<header th:replace="~{fragments/header :: header}"></header>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+<main class="container">
+    <section class="offer-hero">
+        <img th:src="${offer.coverPhoto.imageUrl}" alt="Offer Image">
+        <div class="offer-info">
+            <h1 th:text="${offer.title}"></h1>
+            <p th:text="${offer.description}"></p>
+            <div class="offer-price" th:text="'$' + ${offer.price}"></div>
+            <a class="btn-primary"
+               th:href="@{/bookings/create/{id}(id=${offer.id})}">Book Now</a>
+        </div>
+    </section>
+
+    <section class="gallery-section">
+        <h2>Gallery</h2>
+        <div class="photo-grid">
+            <img th:each="photo : ${offer.photos}" th:src="${photo.imageUrl}" alt="Portfolio Photo">
+        </div>
+    </section>
+
+    <section class="reviews-section">
+        <h2>Reviews</h2>
+        <div class="review-card" th:each="review : ${offer.reviews}">
+            <h3 th:text="${review.author.firstName + ' ' + review.author.lastName}"></h3>
+            <div class="rating" th:text="${review.rating + '/5'}"></div>
+            <p th:text="${review.comment}"></p>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

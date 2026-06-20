@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Offers')}"></head>
+    <title>Offers</title>
+<body>
+
+<header th:replace="~{fragments/header :: header}"></header>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+<main class="container">
+    <section class="page-header">
+        <h1>Photography Offers</h1>
+        <p>Browse available photography experiences.</p>
+    </section>
+
+    <section class="offer-grid">
+        <article class="offer-card" th:each="offer : ${offers}">
+            <img class="offer-image" th:src="${offer.coverPhoto.imageUrl}" alt="Offer">
+            <div class="offer-content">
+                <h2 th:text="${offer.title}"></h2>
+                <p th:text="${offer.description}"></p>
+                <div class="offer-meta">
+                    <span class="price" th:text="'$' + ${offer.price}"></span>
+                    <span class="duration" th:text="${offer.durationHours + ' hrs'}"></span>
+                </div>
+                <a class="btn-primary" th:href="@{/offers/{id}(id=${offer.id})}">View Details</a>
+            </div>
+        </article>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>
