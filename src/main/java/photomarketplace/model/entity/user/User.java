@@ -5,9 +5,15 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import photomarketplace.model.entity.booking.Booking;
+import photomarketplace.model.entity.offer.Offer;
+import photomarketplace.model.entity.review.Review;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Builder
@@ -22,6 +28,16 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
+    @NotBlank
+    @Size(min = 2, max = 50)
+    @Column(nullable = false)
+    private String firstName;
+
+    @NotBlank
+    @Size(min = 2, max = 50)
+    @Column(nullable = false)
+    private String lastName;
 
     @NotBlank
     @Size(min = 6)
@@ -42,28 +58,25 @@ public class User {
     @Column(nullable = false)
     private UserRole role;
 
-    @NotBlank
-    @Size(min = 2, max = 50)
-    @Column(nullable = false)
-    private String firstName;
-
-    @NotBlank
-    @Size(min = 2, max = 50)
-    @Column(nullable = false)
-    private String lastName;
-
     @Column
     private String profileImageUrl;
 
-    @Column(nullable = false)
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "photographer")
-    private List<Portfolio> portfolios = new ArrayList<>();
+    @UpdateTimestamp
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "photographer",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private List<Offer> offers = new ArrayList<>();
 
     @OneToMany(mappedBy = "client")
-    private List<HireRequest> hireRequests = new ArrayList<>();
+    private List<Booking> bookings = new ArrayList<>();
 
-    @OneToMany(mappedBy = "client")
+    @OneToMany(mappedBy = "author")
     private List<Review> reviews = new ArrayList<>();
 }

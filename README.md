@@ -2,14 +2,18 @@
 
 ## Overview
 
-Photographer Portfolio Marketplace is a Spring Boot web application that connects photographers with potential clients. Photographers can create professional portfolios, upload photographs, manage booking requests, and receive reviews. Clients can browse portfolios, submit hire requests, and leave reviews after working with photographers.
+A modern Spring Boot web application that connects photographers and clients through an online marketplace.
+
+Photographers can showcase their portfolio, publish photography offers, manage bookings, and build their reputation through client reviews. Clients can browse photographer profiles, explore available offers, request bookings, and leave reviews after completed photography sessions.
+
+The application follows a marketplace model where photographers promote their work and services while clients can easily discover and hire professionals for various photography needs.
 
 ---
 
 ## Technology Stack
 
 * Java 23
-* Spring Boot 3.4.0
+* Spring Boot 3
 * Spring MVC
 * Spring Data JPA
 * Thymeleaf
@@ -50,23 +54,43 @@ Photographer Portfolio Marketplace is a Spring Boot web application that connect
 
 ---
 
-## Main Functionalities
+## Features
 
-### Portfolio Management
+### Authentication & Authorization
 
-Photographers can create, edit, view, and delete portfolios.
+* User registration and login
+* Role-based access control
+* Photographer and Client account types
 
-### Photo Management
+### Photographer Features
 
-Photographers can upload, update, and remove photos from portfolios.
+* Create and manage photography offers
+* Upload portfolio photos
+* Manage incoming bookings
+* View client reviews
+* Maintain a professional profile
 
-### Hire Request Management
+### Client Features
 
-Clients can create hire requests. Photographers can approve or reject them.
+* Browse photographers
+* Explore photography offers
+* View photographer portfolios
+* Submit booking requests
+* Leave reviews and ratings
+
+### Booking Management
+
+* Request photography sessions
+* Approve or reject bookings
+* Track booking status
+* Manage event information
 
 ### Review System
 
-Clients can leave ratings and reviews for photographers.
+* Five-star rating system
+* Written feedback
+* Photographer reputation building
+* Public review visibility
 
 ---
 
@@ -76,20 +100,23 @@ Clients can leave ratings and reviews for photographers.
 
 Represents an application user.
 
+A user can be either a photographer or a client.
+
 **Properties:**
 
 * `id` (UUID)
+* `firstName`
+* `lastName`
 * `username`
 * `email`
 * `password`
-* `firstName`
-* `lastName`
 * `role`
 * `createdAt`
+* `updatedAt`
 
-### PhotographyService
+### Offer
 
-Represents a photography service offered by a photographer.
+Represents a photography offer published by a photographer.
 
 **Properties:**
 
@@ -98,27 +125,40 @@ Represents a photography service offered by a photographer.
 * `description`
 * `price`
 * `durationHours`
-* `category`
-* `location`
-* `active`
+* `isAvailable`
 * `createdAt`
+* `updatedAt`
 
-### Booking
+### Photo
 
-Represents a reservation made by a client for a photography service.
+Represents a portfolio image uploaded by a photographer.
 
 **Properties:**
 
 * `id` (UUID)
-* `bookingDate`
-* `eventLocation`
+* `title`
+* `imageUrl`
+* `description`
+* `createdAt`
+* `updatedAt`
+
+### Booking
+
+Represents a booking request submitted by a client.
+
+**Properties:**
+
+* `id` (UUID)
+* `eventDate`
+* `location`
 * `notes`
 * `status`
 * `createdAt`
+* `updatedAt`
 
 ### Review
 
-Represents feedback left by a client after a completed photography service.
+Represents feedback left by a client after a completed booking.
 
 **Properties:**
 
@@ -126,6 +166,7 @@ Represents feedback left by a client after a completed photography service.
 * `rating`
 * `comment`
 * `createdAt`
+* `updatedAt`
 
 ---
 
@@ -167,11 +208,65 @@ All forms perform server-side validation and display field-level error messages 
 
 ---
 
-## Future Improvements
+# User Workflow
 
-* Image upload storage
-* Notifications
-* Portfolio likes
-* Advanced search filters
+## Photographer
+
+1. Register as PHOTOGRAPHER
+2. Create photography offers
+3. Upload portfolio photos
+4. Receive booking requests
+5. Approve or reject requests
+6. Complete bookings
+7. Receive reviews
+
+## Client
+
+1. Register as CLIENT
+2. Browse offers
+3. View portfolios
+4. Submit booking requests
+5. Attend photography session
+6. Leave review and rating
+
+---
+
+# Future Enhancements
+
+## Marketplace Features
+
+* Advanced search and filtering
+* Offer categories
 * Photographer verification
-* Chat system
+* Favorites and bookmarks
+
+## Scheduling
+
+* Availability calendar
+* Time slot management
+* Booking conflict prevention
+
+## Communication
+
+* Internal messaging system
+* Email notifications
+* Booking reminders
+
+## Payments
+
+* Online payment integration
+* Deposits and invoices
+* Refund management
+
+## Media Management
+
+* Image upload support
+* Cloud storage integration
+* Watermarking
+
+## Administration
+
+* Admin dashboard
+* User moderation
+* Review moderation
+* Platform analytics
