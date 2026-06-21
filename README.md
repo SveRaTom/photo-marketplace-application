@@ -12,7 +12,7 @@ The application follows a marketplace model where photographers promote their wo
 
 ## Technology Stack
 
-* Java 23
+* Java 21
 * Spring Boot 3
 * Spring MVC
 * Spring Data JPA
@@ -112,6 +112,7 @@ A user can be either a photographer or a client.
 * `password`
 * `role`
 * `profileImageUrl`
+* `isActive`
 * `createdAt`
 * `updatedAt`
 
