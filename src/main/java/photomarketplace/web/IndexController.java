@@ -50,14 +50,27 @@ public class IndexController {
         if (bindingResult.hasErrors()) {
             final ModelAndView modelAndView = new ModelAndView("login");
             modelAndView.addObject("userLoginRequest", userLoginRequest);
+            // Ensure the BindingResult is available in the model under the expected key
+            modelAndView.addObject("org.springframework.validation.BindingResult.userLoginRequest", bindingResult);
 
             return modelAndView;
         }
 
-        final UserDTO user = this.userService.login(userLoginRequest);
-        httpSession.setAttribute("user_id", user.getId());
+        try {
+            final UserDTO user = this.userService.login(userLoginRequest);
+            httpSession.setAttribute("user_id", user.getId());
+            httpSession.setAttribute("user_role", user.getRole().name());
 
-        return new ModelAndView("redirect:/home");
+            return new ModelAndView("redirect:/home");
+        } catch (RuntimeException ex) {
+            // Authentication failed - return to login page with a user-friendly error message
+            final ModelAndView modelAndView = new ModelAndView("login");
+            modelAndView.addObject("userLoginRequest", userLoginRequest);
+            modelAndView.addObject("org.springframework.validation.BindingResult.userLoginRequest", bindingResult);
+            modelAndView.addObject("loginError", ex.getMessage() == null ? "Invalid credentials" : ex.getMessage());
+
+            return modelAndView;
+        }
     }
 
     @GetMapping("/register")
@@ -77,6 +90,8 @@ public class IndexController {
         if (bindingResult.hasErrors()) {
             final ModelAndView modelAndView = new ModelAndView("register");
             modelAndView.addObject("userRegisterRequest", userRegisterRequest);
+            // Ensure the BindingResult is available in the model under the expected key
+            modelAndView.addObject("org.springframework.validation.BindingResult.userRegisterRequest", bindingResult);
 
             return modelAndView;
         }
@@ -88,8 +103,13 @@ public class IndexController {
 
     @GetMapping("/home")
     public ModelAndView getHomePage(final HttpSession httpSession) {
-        final UserDTO user = this.userService.getUserById((UUID) httpSession.getAttribute("user_id"));
+        final UUID userId = (UUID) httpSession.getAttribute("user_id");
 
+        if (userId == null) {
+            return new ModelAndView("redirect:/login");
+        }
+        
+        final UserDTO user = this.userService.getUserById(userId);
         final ModelAndView modelAndView = new ModelAndView("home");
         modelAndView.addObject("user", user);
 
@@ -97,7 +117,7 @@ public class IndexController {
     }
 
     @GetMapping("/logout")
-    public ModelAndView getLogoutPage(final HttpSession httpSession) {
+    public ModelAndView logout(final HttpSession httpSession) {
         httpSession.invalidate();
 
         return new ModelAndView("redirect:/");
