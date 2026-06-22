@@ -2,17 +2,17 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="~{fragments/header :: head('LensMarket')}"></head>
+<head th:replace="~{fragments/header-public :: head('LensMarket')}"></head>
     <title>LensMarket</title>
 <body>
 
-<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div th:replace="~{fragments/header-public :: header}"></div>
 
 <section class="hero">
     <div class="container hero-content">
-        <h1>Find Your Perfect Photographer</h1>
-        <p>Browse professional photographers, book sessions and share experiences.</p>
-        <a th:href="@{/offers}" class="btn">Explore Offers</a>
+        <h1>Welcome to LensMarket</h1>
+        <p>Join photographers and clients to create amazing visual memories.</p>
+        <a th:href="@{/login}" class="btn">Get Started</a>
     </div>
 </section>
 
