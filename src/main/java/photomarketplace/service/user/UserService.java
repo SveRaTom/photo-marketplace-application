@@ -57,7 +57,7 @@ public class UserService {
         return UserMapper.toUserDTO(getUser(id));
     }
 
-    private User getUser(UUID id) {
+    public User getUser(UUID id) {
         return this.userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User with id [%s] does not exist.".formatted(id)));
     }
