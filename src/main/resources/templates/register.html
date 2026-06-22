@@ -2,53 +2,52 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="~{fragments/header :: head('Register')}"></head>
+<head th:replace="~{fragments/header-public :: head('Register')}"></head>
     <title>Register</title>
 <body>
 
-<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div th:replace="~{fragments/header-public :: header}"></div>
 
 <section class="auth-section">
     <div class="auth-card">
 
         <h2>Create Account</h2>
 
-        <form th:action="@{/register}"
-              th:method="post"
-              th:object="${userRegisterDTO}">
+        <form th:action="@{/register}" th:object="${userRegisterRequest}" th:method="post" novalidate>
 
             <div class="form-group">
                 <label for="username">Username</label>
-                <input type="text" placeholder="Username" id="username" th:field="*{username}" required>
-                <p class="alert-warning" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></p>
+                <input type="text" class="form-control" placeholder="Username" id="username" th:field="*{username}" required>
+                <p class="error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></p>
             </div>
 
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" placeholder="Email" id="email" th:field="*{email}" required>
-                <p class="alert-warning" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
+                <input type="email" class="form-control" placeholder="Email" id="email" th:field="*{email}" required>
+                <p class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
             </div>
 
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" placeholder="Password" id="password" th:field="*{password}" required>
-                <p class="alert-warning" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
+                <input type="password" class="form-control" placeholder="Password" id="password" th:field="*{password}" required>
+                <p class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
             </div>
 
             <div class="form-group">
-                <label>Role</label>
-                <label>
-                    <select class="form-control" th:field="*{role}">
-                        <option value="">Select Role</option>
-                        <option value="CLIENT">Client</option>
-                        <option value="PHOTOGRAPHER">Photographer</option>
+                <label for="role">Role</label>
+                <div class="select-wrapper">
+                    <select id="role" class="form-control select-pretty" th:field="*{role}">
+                        <option th:each="role : ${T(photomarketplace.model.entity.user.UserRole).values()}"
+                                th:value="${role}"
+                                th:text="${role}">
+                        </option>
                     </select>
-                </label>
-                <small class="error" th:if="${#fields.hasErrors('role')}" th:errors="*{role}"></small>
+                </div>
+                <p class="error" th:if="${#fields.hasErrors('role')}" th:errors="*{role}"></p>
             </div>
 
-            <button class="btn" type="submit">Register</button>
-
+            <button class="btn-primary" type="submit">Register</button>
+            <p class="form-already">Already have an account? <a href="/login">Login</a>!</p>
         </form>
     </div>
 </section>

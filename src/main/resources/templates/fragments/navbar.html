@@ -9,7 +9,7 @@
 
             <!-- Photographer-Only Links -->
             <li th:if="${session.user_id != null && session.user_role == 'PHOTOGRAPHER'}">
-                <a th:href="@{/offers}">My Offers</a>
+                <a th:href="@{/my-offers}">My Offers</a>
             </li>
             <li th:if="${session.user_id != null && session.user_role == 'PHOTOGRAPHER'}">
                 <a th:href="@{/portfolio}">My Photos</a>

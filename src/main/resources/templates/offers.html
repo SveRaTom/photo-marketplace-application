@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header :: head('Offers')}"></head>
-    <title>Offers</title>
 <body>
 
-<header th:replace="~{fragments/header :: header}"></header>
-<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+<div th:replace="~{fragments/header :: header}"></div>
 
 <main class="container">
     <section class="page-header">
@@ -13,23 +11,43 @@
         <p>Browse available photography experiences.</p>
     </section>
 
-    <section class="offer-grid">
+    <section class="offers-grid" th:if="${!#lists.isEmpty(offers)}">
         <article class="offer-card" th:each="offer : ${offers}">
-            <img class="offer-image" th:src="${offer.coverPhoto.imageUrl}" alt="Offer">
-            <div class="offer-content">
+            <img class="offer-image"
+                 th:src="${offer.coverPhoto != null ? offer.coverPhoto.imageUrl : 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=900&q=80'}"
+                 alt="Offer">
+
+            <div class="offer-card-content">
                 <h2 th:text="${offer.title}"></h2>
-                <p th:text="${offer.description}"></p>
+
                 <div class="offer-meta">
-                    <span class="price" th:text="'$' + ${offer.price}"></span>
-                    <span class="duration" th:text="${offer.durationHours + ' hrs'}"></span>
+                    <span class="location-badge" th:text="${offer.location}"></span>
+                    <span class="duration-badge" th:text="${offer.durationHours + ' hours'}"></span>
+                    <span th:class="${offer.available ? 'availability-badge available' : 'availability-badge unavailable'}"
+                          th:text="${offer.available ? 'Available' : 'Unavailable'}"></span>
                 </div>
-                <a class="btn-primary" th:href="@{/offers/{id}(id=${offer.id})}">View Details</a>
+
+                <p class="offer-description" th:text="${offer.description}"></p>
+
+                <div class="offer-price">
+                    <span th:text="${offer.price}"></span>
+                    <span>€</span>
+                </div>
+            </div>
+
+            <div class="offer-actions">
+                <a class="btn btn-primary" th:href="@{/offers/{id}(id=${offer.id})}">View Details</a>
             </div>
         </article>
     </section>
+
+    <section th:if="${#lists.isEmpty(offers)}" class="empty-state">
+        <h2>No Offers Available</h2>
+        <p>There are no photography offers published yet.</p>
+    </section>
 </main>
 
-<footer th:replace="~{fragments/footer :: footer}"></footer>
+<div th:replace="~{fragments/footer :: footer}"></div>
 
 </body>
 </html>

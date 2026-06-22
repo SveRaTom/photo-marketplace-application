@@ -2,33 +2,33 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="~{fragments/header :: head('Login')}"></head>
+<head th:replace="~{fragments/header-public :: head('Login')}"></head>
     <title>Login</title>
 <body>
 
-<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div th:replace="~{fragments/header-public :: header}"></div>
 
 <section class="auth-section">
     <div class="auth-card">
 
         <h2>Login</h2>
+        <p class="error" th:if="${loginError}" th:text="${loginError}"></p>
 
-        <form th:action="@{/login}" th:method="post" th:object="${userLoginRequest}">
+        <form th:action="@{/login}" th:object="${userLoginRequest}" th:method="post" novalidate>
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="text" placeholder="Email" id="email" th:field="*{email}" required>
-                <p class="alert-warning" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
+                <input type="email" class="form-control" placeholder="Email" id="email" th:field="*{email}" required>
+                <p class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" placeholder="Password" id="password" th:field="*{password}" required>
-                <p class="alert-warning" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
+                <input type="password" class="form-control" placeholder="Password" id="password" th:field="*{password}" required>
+                <p class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
             </div>
 
-            <button class="btn" type="submit">Login</button>
+            <button class="btn-primary" type="submit">Login</button>
 
             <p class="form-already">Don't have an account? <a href="/register">Register now</a>!</p>
-
         </form>
     </div>
 </section>
