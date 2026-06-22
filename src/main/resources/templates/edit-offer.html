@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/header :: head('Edit Offer')}"></head>
+
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="container">
+    <section class="form-container">
+
+        <h1>Edit Offer</h1>
+
+        <form th:action="@{/offers/edit/{id}(id=${offerId})}" th:object="${offerRequestDTO}" th:method="post" novalidate>
+            <div class="form-group">
+                <label for="title">Offer Title</label>
+                <input id="title" type="text" class="form-control" th:field="*{title}">
+                <small class="error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="location">Location</label>
+                <input id="location" type="text" class="form-control" th:field="*{location}">
+                <small class="error" th:if="${#fields.hasErrors('location')}" th:errors="*{location}"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="price">Price (€)</label>
+                <input id="price" type="number" min="0" step="0.01" class="form-control" th:field="*{price}">
+                <small class="error" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="durationHours">Duration (hours)</label>
+                <input id="durationHours" type="number" min="1" max="24" class="form-control"
+                       th:field="*{durationHours}">
+                <small class="error" th:if="${#fields.hasErrors('durationHours')}"
+                       th:errors="*{durationHours}"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="coverPhotoImageUrl">Cover Photo URL</label>
+                <input id="coverPhotoImageUrl" type="url" class="form-control" th:field="*{coverPhotoImageUrl}" required>
+                <small class="error" th:if="${#fields.hasErrors('coverPhotoImageUrl')}"
+                       th:errors="*{coverPhotoImageUrl}"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" rows="6" class="form-control" th:field="*{description}"></textarea>
+                <small class="error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">
+                </small>
+            </div>
+
+            <div class="form-check">
+                <input id="available" type="checkbox" th:field="*{available}">
+                <label for="available">Available for booking</label>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a th:href="@{/my-offers}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </section>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

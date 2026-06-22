@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/header :: head('My Offers')}"></head>
+
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="container">
+    <section class="page-header">
+        <h1>My Photography Offers</h1>
+
+        <a th:href="@{/offers/create}"
+           class="btn btn-primary">Create New Offer
+        </a>
+    </section>
+
+    <section class="offers-grid" th:if="${!#lists.isEmpty(offers)}">
+        <div class="offer-card"
+             th:each="offer : ${offers}">
+            <img class="offer-image"
+                 th:src="${offer.coverPhoto != null ? offer.coverPhoto.imageUrl : 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=900&q=80'}"
+                 alt="Offer">
+
+            <div class="offer-card-content">
+                <h2 th:text="${offer.title}"></h2>
+
+                <div class="offer-meta">
+                    <span class="location-badge" th:text="${offer.location}"></span>
+                    <span class="duration-badge" th:text="${offer.durationHours + ' hours'}"></span>
+                    <span th:class="${offer.available ? 'availability-badge available' : 'availability-badge unavailable'}"
+                          th:text="${offer.available ? 'Available' : 'Unavailable'}"></span>
+                </div>
+
+                <p class="offer-description" th:text="${offer.description}"></p>
+
+                <div class="offer-price">
+                    <span th:text="${offer.price}"></span>
+                    <span>€</span>
+                </div>
+            </div>
+
+            <div class="offer-actions">
+                <a th:href="@{/offers/{id}(id=${offer.id})}"
+                   class="btn btn-primary">View Details
+                </a>
+                <a th:href="@{/offers/edit/{id}(id=${offer.id})}"
+                   class="btn btn-warning">Edit
+                </a>
+
+                <form th:id="'delete-offer-form-' + ${offer.id}"
+                      th:action="@{/offers/delete/{id}(id=${offer.id})}" th:method="post">
+                    <button type="button" class="btn btn-danger delete-offer-trigger"
+                            th:data-form-id="'delete-offer-form-' + ${offer.id}"
+                            th:data-offer-title="${offer.title}">Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section th:if="${#lists.isEmpty(offers)}" class="empty-state">
+        <h2>No Offers Yet</h2>
+
+        <p>Create your first photography offer and start receiving bookings.</p>
+
+        <a th:href="@{/offers/create}" class="btn btn-primary">Create Offer</a>
+    </section>
+</main>
+
+<div id="deleteOfferModal" class="modal-backdrop" aria-hidden="true">
+    <div class="confirmation-modal" role="dialog" aria-modal="true" aria-labelledby="deleteOfferTitle">
+        <h2 id="deleteOfferTitle">Delete this offer?</h2>
+        <p id="deleteOfferMessage">
+            Please confirm that you want to remove this photography offer. It will no longer be visible to clients.
+        </p>
+
+        <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" id="cancelDeleteOffer">Keep Offer</button>
+            <button type="button" class="btn btn-danger" id="confirmDeleteOffer">Delete Offer</button>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>
