@@ -41,7 +41,7 @@ public class UserService {
 
     public void register(final UserRegisterRequestDTO userRegisterRequest) {
         this.userRepository.findByEmail(userRegisterRequest.getEmail())
-                .ifPresent(_ -> {
+                .ifPresent(user -> {
                     throw new RuntimeException("User with this email already exists!");
                 });
 
