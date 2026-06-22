@@ -2,32 +2,45 @@
     <div class="container nav-container">
         <a th:href="@{/}" class="logo">LensMarket</a>
         <ul class="nav-links">
-            <li>
-                <a th:href="@{/}">Home</a>
+            <!-- Authenticated User Links -->
+            <li th:if="${session.user_id != null}">
+                <a th:href="@{/home}">Home</a>
             </li>
-            <li th:if="${session.userId != null}">
+
+            <!-- Photographer-Only Links -->
+            <li th:if="${session.user_id != null && session.user_role == 'PHOTOGRAPHER'}">
+                <a th:href="@{/offers}">My Offers</a>
+            </li>
+            <li th:if="${session.user_id != null && session.user_role == 'PHOTOGRAPHER'}">
+                <a th:href="@{/portfolio}">My Photos</a>
+            </li>
+            <li th:if="${session.user_id != null && session.user_role == 'PHOTOGRAPHER'}">
                 <a th:href="@{/dashboard}">Dashboard</a>
             </li>
-            <li th:if="${session.userId != null}">
-                <a th:href="@{/offers}">Offers</a>
-            </li>
-            <li th:if="${session.userId != null}">
+
+            <!-- All Authenticated Users -->
+            <li th:if="${session.user_id != null}">
                 <a th:href="@{/bookings}">Bookings</a>
             </li>
-            <li th:if="${session.userId != null}">
+            <li th:if="${session.user_id != null}">
                 <a th:href="@{/reviews}">Reviews</a>
             </li>
-            <li th:if="${session.userId != null}">
+            <li th:if="${session.user_id != null}">
                 <a th:href="@{/profile}">Profile</a>
             </li>
-            <li th:if="${session.userId == null}">
+
+            <!-- Unauthenticated User Links -->
+            <li th:if="${session.user_id == null}">
                 <a th:href="@{/login}">Login</a>
             </li>
-            <li th:if="${session.userId == null}">
+            <li th:if="${session.user_id == null}">
                 <a th:href="@{/register}">Register</a>
             </li>
-            <li th:if="${session.userId != null}">
-                <a th:href="@{/logout}">Logout</a>
+
+            <li>
+                <form  th:if="${session.user_id != null}" th:action="@{/logout}" th:method="post">
+                    <button type="submit" class="nav-link-btn">Logout</button>
+                </form>
             </li>
         </ul>
     </div>

@@ -116,7 +116,7 @@ public class IndexController {
         return modelAndView;
     }
 
-    @GetMapping("/logout")
+    @PostMapping("/logout")
     public ModelAndView logout(final HttpSession httpSession) {
         httpSession.invalidate();
 
