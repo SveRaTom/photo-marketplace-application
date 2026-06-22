@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/header :: head('Photographer Profile')}"></head>
+
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="container">
+  <section class="profile-card">
+    <div class="profile-header">
+      <div class="profile-avatar">
+        <img th:src="${photographer.profileImageUrl}" alt="Photographer Profile">
+      </div>
+      <div>
+        <h1 th:text="${photographer.firstName + ' ' + photographer.lastName}"></h1>
+        <p th:text="${photographer.bio}"></p>
+        <div class="profile-stats">
+          <span>Rating: <strong th:text="${photographer.averageRating}"></strong></span>
+          <span>Reviews: <strong th:text="${photographer.reviewCount}"></strong></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Available Offers</h2>
+
+    <div class="offers-grid">
+      <div class="offer-card" th:each="offer : ${offers}">
+        <h3 th:text="${offer.title}"></h3>
+        <p th:text="${offer.description}">Description</p>
+        <p><strong th:text="${offer.price}"></strong> €</p>
+        <a th:href="@{/offers/{id}(id=${offer.id})}" class="btn btn-primary">View Offer</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Reviews</h2>
+
+    <div class="review-card" th:each="review : ${reviews}">
+      <div class="review-header">
+        <strong th:text="${review.author.firstName + ' ' + review.author.lastName}"></strong>
+        <span th:text="${review.rating + ' ★'}"></span>
+      </div>
+      <p th:text="${review.comment}"></p>
+    </div>
+  </section>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

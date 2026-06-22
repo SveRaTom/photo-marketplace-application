@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/header :: head('Leave Review')}"></head>
+
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="container">
+    <section class="form-container">
+
+        <h1>Leave a Review</h1>
+
+        <form th:action="@{/reviews/create/{bookingId}(bookingId=${bookingId})}" th:object="${reviewRequestDTO}"
+              th:method="post">
+            <div class="form-group">
+                <label for="rating">Rating</label>
+                <select id="rating" th:field="*{rating}">
+                    <option value="">Select Rating</option>
+                    <option value="1">★☆☆☆☆</option>
+                    <option value="2">★★☆☆☆</option>
+                    <option value="3">★★★☆☆</option>
+                    <option value="4">★★★★☆</option>
+                    <option value="5">★★★★★</option>
+                </select>
+                <small class="error" th:if="${#fields.hasErrors('rating')}" th:errors="*{rating}"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="comment">Review</label>
+                <textarea id="comment" rows="6" th:field="*{comment}"
+                          placeholder="Describe your experience..."></textarea>
+                <small class="error" th:if="${#fields.hasErrors('comment')}" th:errors="*{comment}"></small>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Submit Review</button>
+                <a th:href="@{/my-bookings}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </section>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

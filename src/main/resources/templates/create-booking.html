@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/header :: head('Book Offer')}"></head>
+
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="container">
+    <section class="form-container">
+
+        <h1>Book Photography Session</h1>
+
+        <form th:action="@{/bookings/create/{offerId}(offerId=${offerId})}" th:object="${bookingRequestDTO}"
+              th:method="post">
+            <div class="form-group">
+                <label for="eventDate">Event Date</label>
+                <input id="eventDate" type="date" th:field="*{eventDate}">
+                <small class="error" th:if="${#fields.hasErrors('eventDate')}" th:errors="*{eventDate}"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="location">Event Location</label>
+                <input id="location" type="text" th:field="*{location}" placeholder="City, Venue, Address">
+                <small class="error" th:if="${#fields.hasErrors('location')}" th:errors="*{location}"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="notes">Additional Requirements</label>
+                <textarea id="notes" rows="6" th:field="*{notes}"></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Submit Booking</button>
+                <a th:href="@{/offers}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </section>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

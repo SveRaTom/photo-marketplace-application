@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/header :: head('Booking Details')}"></head>
+
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="container">
+    <section class="details-card">
+
+        <div class="details-header">
+            <h1>Booking Details</h1>
+
+            <span class="status-badge" th:text="${booking.status}"></span>
+        </div>
+
+        <div class="details-content">
+            <div class="detail-row">
+                <strong>Offer:</strong>
+                <span th:text="${booking.offerTitle}"></span>
+            </div>
+
+            <div class="detail-row">
+                <strong>Photographer:</strong>
+                <span th:text="${booking.photographerName}"></span>
+            </div>
+
+            <div class="detail-row">
+                <strong>Client:</strong>
+                <span th:text="${booking.clientName}">
+                    Jane Smith
+                </span>
+            </div>
+
+            <div class="detail-row">
+                <strong>Event Date:</strong>
+                <span th:text="${booking.eventDate}"></span>
+            </div>
+
+            <div class="detail-row">
+                <strong>Location:</strong>
+                <span th:text="${booking.location}"></span>
+            </div>
+
+            <div class="detail-row">
+                <strong>Created On:</strong>
+                <span th:text="${booking.createdAt}"></span>
+            </div>
+
+            <div class="detail-column">
+                <strong>Additional Requirements:</strong>
+                <div class="notes-box" th:text="${booking.notes}">Outdoor ceremony and reception photography.</div>
+            </div>
+        </div>
+
+        <!-- CLIENT ACTIONS -->
+        <div class="action-group" th:if="${session.user_role == 'CLIENT'}">
+            <a th:if="${booking.status.name() == 'PENDING'}" th:href="@{/bookings/edit/{id}(id=${booking.id})}"
+               class="btn btn-warning">Edit Booking</a>
+            <form th:if="${booking.status.name() == 'PENDING'}" th:action="@{/bookings/delete/{id}(id=${booking.id})}"
+                  th:method="post">
+                <button type="submit" class="btn btn-danger"
+                        data-confirm-message="Cancel this booking?">Cancel
+                    Booking
+                </button>
+            </form>
+        </div>
+
+        <!-- PHOTOGRAPHER ACTIONS -->
+        <div class="action-group" th:if="${session.user_role == 'PHOTOGRAPHER' and booking.status.name() == 'PENDING'}">
+            <form th:action="@{/bookings/{id}/approve(id=${booking.id})}" th:method="post">
+                <button type="submit" class="btn btn-success">Approve Booking</button>
+            </form>
+
+            <form th:action="@{/bookings/{id}/reject(id=${booking.id})}" th:method="post">
+                <button type="submit" class="btn btn-danger">Reject Booking</button>
+            </form>
+        </div>
+
+        <div class="back-link">
+            <a th:href="@{/my-bookings}" class="btn btn-secondary">Back</a>
+        </div>
+    </section>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>
