@@ -207,8 +207,9 @@ All forms perform server-side validation and display field-level error messages 
     ```properties
     spring.profiles.active=prod
    ```
-5. Run Maven install
-6. Start application
+5. Set correct passwords for `app.photographer.password` and `app.client.password` in `application-dev.properties` and `application-prod.properties` files.
+6. Run Maven install
+7. Start application
 
 ---
 
