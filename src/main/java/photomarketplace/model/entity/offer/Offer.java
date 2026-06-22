@@ -62,7 +62,7 @@ public class Offer {
     private User photographer;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cover_photo_id", nullable = false)
+    @JoinColumn(name = "cover_photo_id")
     private Photo coverPhoto;
 
     @OneToMany(mappedBy = "offer", cascade = CascadeType.ALL, orphanRemoval = true)
