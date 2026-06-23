@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/header :: head('Review Details')}"></head>
+
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="container">
+    <section class="details-card review-details-card">
+        <div class="details-header">
+            <h1>Review Details</h1>
+            <div class="rating-badge">
+                <span th:text="${review.rating}"></span>/5 ★
+            </div>
+        </div>
+
+        <div class="details-content">
+            <div class="detail-row">
+                <strong>Offer:</strong>
+                <a th:href="@{/offers/{id}(id=${review.offer.id})}" th:text="${review.offer.title}"></a>
+            </div>
+
+            <div class="detail-row">
+                <strong>Photographer:</strong>
+                <span th:text="${review.offer.photographer.displayName}"></span>
+            </div>
+
+            <div class="detail-row">
+                <strong>Author:</strong>
+                <span th:text="${review.author.displayName}"></span>
+            </div>
+
+            <div class="detail-row">
+                <strong>Event Date:</strong>
+                <span th:text="${#temporals.format(review.booking.eventDate, 'dd MMM yyyy')}"></span>
+            </div>
+
+            <div class="detail-row">
+                <strong>Created On:</strong>
+                <span th:text="${#temporals.format(review.createdAt, 'dd MMM yyyy HH:mm')}"></span>
+            </div>
+
+            <div class="detail-column">
+                <strong>Review:</strong>
+                <div class="notes-box" th:text="${review.comment}"></div>
+            </div>
+        </div>
+
+        <div class="details-actions">
+            <div class="details-actions-left">
+                <a th:href="${backUrl}" class="btn btn-secondary">Back</a>
+                <a th:if="${review.canEdit}" th:href="@{/reviews/edit/{id}(id=${review.id})}"
+                   class="btn btn-warning">Edit Review</a>
+            </div>
+
+            <div class="details-actions-right">
+                <form th:if="${review.canDelete}" th:action="@{/reviews/delete/{id}(id=${review.id})}"
+                      th:method="post">
+                    <button type="submit" class="btn btn-danger"
+                            data-confirm-title="Delete this review?"
+                            data-confirm-message="Please confirm that you want to delete this review. This action cannot be undone."
+                            data-confirm-confirm-label="Delete Review">Delete Review
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

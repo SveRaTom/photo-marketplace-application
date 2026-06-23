@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/header :: head('Offer Reviews')}"></head>
+
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="container">
+    <section class="page-header">
+        <div>
+            <h1 th:text="${'Reviews for ' + offer.title}"></h1>
+            <p th:text="${'Photographer: ' + offer.photographer.displayName}"></p>
+        </div>
+        <a th:href="@{/offers/{id}(id=${offer.id})}" class="btn btn-secondary">Back to Offer</a>
+    </section>
+
+    <section th:if="${!#lists.isEmpty(reviews)}" class="reviews-container">
+        <div class="review-card" th:each="review : ${reviews}">
+            <div class="review-top">
+                <div>
+                    <h3 th:text="${review.author.displayName}"></h3>
+                    <p class="review-offer" th:text="${#temporals.format(review.createdAt, 'dd MMM yyyy')}"></p>
+                </div>
+                <div class="rating-badge">
+                    <span th:text="${review.rating}"></span>/5 ★
+                </div>
+            </div>
+
+            <div class="review-content">
+                <p th:text="${review.comment}"></p>
+            </div>
+
+            <div class="review-actions" th:if="${session.user_id != null}">
+                <a th:href="@{/reviews/{id}(id=${review.id})}" class="btn btn-primary">Details</a>
+                <a th:if="${review.canEdit}" th:href="@{/reviews/edit/{id}(id=${review.id})}"
+                   class="btn btn-warning">Edit</a>
+            </div>
+        </div>
+    </section>
+
+    <section th:if="${#lists.isEmpty(reviews)}" class="empty-state">
+        <h2>No Reviews Yet</h2>
+        <p>This offer does not have any reviews yet.</p>
+        <a th:href="@{/offers/{id}(id=${offer.id})}" class="btn btn-primary">Back to Offer</a>
+    </section>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>
