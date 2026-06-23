@@ -10,37 +10,41 @@
 
 <main class="container">
     <section class="page-header">
-        <h1>My Bookings</h1>
+        <div>
+            <h1>My Bookings</h1>
+            <p>Bookings connected to your photography requests and offers.</p>
+        </div>
     </section>
 
-    <section class="offers-grid">
-        <div class="offer-card" th:each="booking : ${bookings}">
+    <section class="bookings-grid" th:if="${!#lists.isEmpty(bookings)}">
+        <div class="offer-card booking-card" th:each="booking : ${bookings}">
             <div class="offer-card-content">
-                <h2 th:text="${booking.offerTitle}"></h2>
-                <p>
-                    Photographer:
-                    <strong th:text="${booking.photographerName}"></strong>
-                </p>
-                <p>
-                    Event Date:
-                    <strong th:text="${booking.eventDate}"></strong>
-                </p>
-                <p>
-                    Status:
-                    <span th:text="${booking.status}"></span>
-                </p>
+                <h2 th:text="${booking.offer.title}"></h2>
+                <div class="booking-meta">
+                    <span>Client: <strong th:text="${booking.client.displayName}"></strong></span>
+                    <span>Photographer: <strong th:text="${booking.offer.photographer.displayName}"></strong></span>
+                    <span>Event date: <strong th:text="${#temporals.format(booking.eventDate, 'dd MMM yyyy')}"></strong></span>
+                </div>
+                <span th:class="'status-badge status-' + ${#strings.toLowerCase(booking.status.name())}"
+                      th:text="${booking.status}"></span>
             </div>
 
             <div class="offer-actions">
-                <a th:href="@{/bookings/{id}(id=${booking.id})}" class="btn btn-secondary">Details</a>
-                <a th:if="${booking.status.name() == 'PENDING'}" th:href="@{/bookings/edit/{id}(id=${booking.id})}"
+                <a th:href="@{/bookings/{id}(id=${booking.id})}" class="btn btn-primary">Details</a>
+                <a th:if="${booking.canEdit}" th:href="@{/bookings/edit/{id}(id=${booking.id})}"
                    class="btn btn-warning">Edit</a>
+                <a th:if="${booking.canReview}" th:href="@{/reviews/create/{bookingId}(bookingId=${booking.id})}"
+                   class="btn btn-success">Leave Review</a>
+                <a th:if="${booking.review != null}" th:href="@{/reviews/{id}(id=${booking.review.id}, from='bookings')}"
+                   class="btn btn-secondary">Review</a>
 
-                <form th:if="${booking.status.name() == 'PENDING'}"
+                <form th:if="${booking.canCancel}" class="danger-action"
                       th:action="@{/bookings/delete/{id}(id=${booking.id})}" th:method="post">
                     <button type="submit" class="btn btn-danger"
-                            data-confirm-message="Cancel this booking?">
-                        Cancel
+                            data-confirm-title="Cancel this booking?"
+                            data-confirm-message="This booking will remain visible in your booking history with cancelled status."
+                            data-confirm-confirm-label="Cancel Booking">
+                        Cancel Booking
                     </button>
                 </form>
             </div>
