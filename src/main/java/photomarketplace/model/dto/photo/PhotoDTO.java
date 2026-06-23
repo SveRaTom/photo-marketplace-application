@@ -16,6 +16,12 @@ public class PhotoDTO {
     private String imageUrl;
     private String description;
     private OfferDTO offer;
+    private UUID offerId;
+    private UUID photographerId;
+    private boolean coverPhoto;
+    private boolean canEdit;
+    private boolean canDelete;
+    private boolean canSetAsCover;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
