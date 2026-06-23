@@ -19,9 +19,12 @@ public class SessionInterceptor implements HandlerInterceptor {
 
     private static final String UUID_REGEX = "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
     private static final Set<String> UNAUTHENTICATED_ENDPOINTS = Set.of("/", "/login", "/register", "/error");
-    private static final Set<String> PUBLIC_GET_ENDPOINTS = Set.of("/offers", "/offers/{id}", "/photographers/{id}");
+    private static final Set<String> PUBLIC_GET_ENDPOINTS = Set.of("/offers", "/offers/{id}",
+            "/offers/{id}/reviews", "/offers/{id}/photos", "/reviews/{id}", "/photos/{id}", "/photographers/{id}");
     private static final Set<String> PHOTOGRAPHER_ENDPOINTS = Set.of("/my-offers", "/offers/create",
-            "/offers/edit/{id}", "/offers/delete/{id}", "/portfolio/{id}", "/dashboard");
+            "/offers/edit/{id}", "/offers/delete/{id}", "/bookings/{id}/approve", "/bookings/{id}/reject",
+            "/portfolio", "/photos", "/photos/create/{id}", "/photos/edit/{id}", "/photos/delete/{id}",
+            "/photos/{id}/cover", "/portfolio/{id}", "/dashboard");
 
     private final UserService userService;
 
