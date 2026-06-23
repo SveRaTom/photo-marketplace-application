@@ -13,7 +13,7 @@
 
     <h1>Edit Review</h1>
 
-    <form th:action="@{/reviews/edit/{id}(id=${reviewId})}" th:object="${reviewRequestDTO}" th:method="post">
+    <form th:action="@{/reviews/edit/{id}(id=${reviewId})}" th:object="${reviewRequestDTO}" th:method="put">
       <div class="form-group">
         <label for="rating">Rating</label>
         <div class="select-wrapper">

@@ -8,6 +8,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import photomarketplace.model.dto.photo.PhotoDTO;
@@ -113,7 +114,7 @@ public class PhotoController {
         return modelAndView;
     }
 
-    @PostMapping("/photos/edit/{id}")
+    @PutMapping("/photos/edit/{id}")
     public ModelAndView editPhoto(@PathVariable final UUID id,
                                   @Valid final PhotoRequestDTO photoRequestDTO,
                                   final BindingResult bindingResult,

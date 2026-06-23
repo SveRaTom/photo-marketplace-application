@@ -13,7 +13,7 @@
 
         <h1>Edit Booking</h1>
 
-        <form th:action="@{/bookings/edit/{id}(id=${bookingId})}" th:object="${bookingRequestDTO}" th:method="post">
+        <form th:action="@{/bookings/edit/{id}(id=${bookingId})}" th:object="${bookingRequestDTO}" th:method="put">
             <div class="form-group">
                 <label for="eventDate">Event Date</label>
                 <input id="eventDate" class="form-control" type="date" th:field="*{eventDate}">

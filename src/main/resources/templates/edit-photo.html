@@ -13,7 +13,7 @@
         <h1>Edit Photo</h1>
         <p class="form-intro" th:text="${'Update photo details for ' + photo.offer.title + '.'}"></p>
 
-        <form th:action="@{/photos/edit/{id}(id=${photoId})}" th:object="${photoRequestDTO}" th:method="post">
+        <form th:action="@{/photos/edit/{id}(id=${photoId})}" th:object="${photoRequestDTO}" th:method="put">
             <div class="form-group">
                 <label for="title">Title</label>
                 <input id="title" type="text" class="form-control" th:field="*{title}">

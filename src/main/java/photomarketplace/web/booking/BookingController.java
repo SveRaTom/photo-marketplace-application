@@ -8,6 +8,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import photomarketplace.model.dto.booking.BookingRequestDTO;
@@ -92,7 +93,7 @@ public class BookingController {
         return modelAndView;
     }
 
-    @PostMapping("/bookings/edit/{id}")
+    @PutMapping("/bookings/edit/{id}")
     public ModelAndView editBooking(@PathVariable final UUID id,
                                     @Valid final BookingRequestDTO bookingRequestDTO,
                                     final BindingResult bindingResult,
