@@ -17,4 +17,16 @@
 <!-- Header fragment for authenticated pages -->
 <th:block th:fragment="header">
   <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+  <div id="confirmationModal" class="modal-backdrop" aria-hidden="true">
+    <div class="confirmation-modal" role="dialog" aria-modal="true" aria-labelledby="confirmationModalTitle">
+      <h2 id="confirmationModalTitle">Please confirm</h2>
+      <p id="confirmationModalMessage"></p>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="confirmationModalCancel">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirmationModalConfirm">Confirm</button>
+      </div>
+    </div>
+  </div>
 </th:block>
