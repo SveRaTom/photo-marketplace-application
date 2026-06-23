@@ -24,13 +24,14 @@
             <div class="offer-price" th:text="${offer.price + ' €'}"></div>
             <div class="details-actions offer-details-actions">
                 <div class="details-actions-left">
-                    <a th:href="@{/offers}" class="btn btn-secondary">Back</a>
+                    <a th:href="${session.user_id != null && session.user_id == offer.photographer.id ? '/my-offers' : '/offers'}"
+                       class="btn btn-secondary">Back</a>
                     <a class="btn btn-primary"
                        th:if="${offer.available and (session.user_id == null or session.user_id != offer.photographer.id)}"
                        th:href="@{/bookings/create/{id}(id=${offer.id})}">Book Now</a>
                     <a class="btn btn-primary"
                        th:if="${session.user_id != null && session.user_id == offer.photographer.id}"
-                       th:href="@{/photos/create/{offerId}(offerId=${offer.id})}">Add Photo</a>
+                       th:href="@{/photos/create/{offerId}(offerId=${offer.id}, from='offer-details')}">Add Photo</a>
                 </div>
             </div>
         </div>

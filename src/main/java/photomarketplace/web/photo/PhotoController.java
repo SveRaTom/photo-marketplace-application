@@ -67,17 +67,22 @@ public class PhotoController {
     }
 
     @GetMapping("/photos/create/{offerId}")
-    public ModelAndView getCreatePhotoPage(@PathVariable final UUID offerId, final HttpSession httpSession) {
+    public ModelAndView getCreatePhotoPage(@PathVariable final UUID offerId,
+                                           @RequestParam(required = false) final String from,
+                                           final HttpSession httpSession) {
+
         final ModelAndView modelAndView = new ModelAndView("create-photo");
         modelAndView.addObject("offerId", offerId);
         modelAndView.addObject("offer", this.photoService.getOfferForPhotoCreate(offerId, getUserId(httpSession)));
         modelAndView.addObject("photoRequestDTO", PhotoRequestDTO.builder().build());
+        addCreatePhotoNavigation(modelAndView, offerId, from);
 
         return modelAndView;
     }
 
     @PostMapping("/photos/create/{offerId}")
     public ModelAndView createPhoto(@PathVariable final UUID offerId,
+                                    @RequestParam(required = false) final String from,
                                     @Valid final PhotoRequestDTO photoRequestDTO,
                                     final BindingResult bindingResult,
                                     final HttpSession httpSession) {
@@ -88,13 +93,14 @@ public class PhotoController {
             modelAndView.addObject("offer", this.photoService.getOfferForPhotoCreate(offerId, getUserId(httpSession)));
             modelAndView.addObject("photoRequestDTO", photoRequestDTO);
             modelAndView.addObject("org.springframework.validation.BindingResult.photoRequestDTO", bindingResult);
+            addCreatePhotoNavigation(modelAndView, offerId, from);
 
             return modelAndView;
         }
 
         final UUID photoId = this.photoService.createPhoto(offerId, photoRequestDTO, getUserId(httpSession));
 
-        return new ModelAndView("redirect:/photos/" + photoId + "?from=offer-photos");
+        return new ModelAndView("redirect:/photos/" + photoId + "?from=" + resolveCreatedPhotoSource(from));
     }
 
     @GetMapping("/photos/edit/{id}")
@@ -156,10 +162,39 @@ public class PhotoController {
             return "/portfolio";
         }
 
+        if ("my-offers".equals(from)) {
+            return "/my-offers";
+        }
+
         if ("offer-details".equals(from)) {
             return "/offers/" + photo.getOfferId();
         }
 
         return "/offers/" + photo.getOfferId() + "/photos";
+    }
+
+    private static void addCreatePhotoNavigation(final ModelAndView modelAndView,
+                                                final UUID offerId,
+                                                final String from) {
+        final String source = resolveCreatePhotoSource(from);
+
+        modelAndView.addObject("from", source);
+        modelAndView.addObject("cancelUrl", switch (source) {
+            case "offer-details" -> "/offers/" + offerId;
+            case "my-offers" -> "/my-offers";
+            default -> "/offers/" + offerId + "/photos";
+        });
+    }
+
+    private static String resolveCreatedPhotoSource(final String from) {
+        return resolveCreatePhotoSource(from);
+    }
+
+    private static String resolveCreatePhotoSource(final String from) {
+        if ("offer-details".equals(from) || "my-offers".equals(from)) {
+            return from;
+        }
+
+        return "offer-photos";
     }
 }

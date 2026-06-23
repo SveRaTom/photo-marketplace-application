@@ -26,7 +26,7 @@
             <div class="photo-card-content">
                 <div class="photo-card-header">
                     <h2 th:text="${photo.title != null ? photo.title : 'Untitled Photo'}"></h2>
-                    <span th:if="${photo.coverPhoto}" class="cover-badge">Cover</span>
+                    <span th:if="${photo.coverPhoto}" class="cover-badge">Cover Photo</span>
                 </div>
 
                 <p class="photo-offer" th:text="${photo.offer.title}"></p>

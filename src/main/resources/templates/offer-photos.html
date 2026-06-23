@@ -17,7 +17,7 @@
         <div class="page-actions">
             <a th:href="@{/offers/{id}(id=${offer.id})}" class="btn btn-secondary">Back to Offer</a>
             <a th:if="${session.user_id != null && session.user_id == offer.photographer.id}"
-               th:href="@{/photos/create/{offerId}(offerId=${offer.id})}" class="btn btn-primary">Add Photo</a>
+               th:href="@{/photos/create/{offerId}(offerId=${offer.id}, from='offer-photos')}" class="btn btn-primary">Add Photo</a>
         </div>
     </section>
 
@@ -30,7 +30,7 @@
             <div class="photo-card-content">
                 <div class="photo-card-header">
                     <h2 th:text="${photo.title != null ? photo.title : 'Untitled Photo'}"></h2>
-                    <span th:if="${photo.coverPhoto}" class="cover-badge">Cover</span>
+                    <span th:if="${photo.coverPhoto}" class="cover-badge">Cover Photo</span>
                 </div>
                 <p th:if="${photo.description != null}" class="photo-description" th:text="${photo.description}"></p>
             </div>
@@ -55,7 +55,7 @@
         <h2>No Photos Yet</h2>
         <p>This offer does not have portfolio photos yet.</p>
         <a th:if="${session.user_id != null && session.user_id == offer.photographer.id}"
-           th:href="@{/photos/create/{offerId}(offerId=${offer.id})}" class="btn btn-primary">Add First Photo</a>
+           th:href="@{/photos/create/{offerId}(offerId=${offer.id}, from='offer-photos')}" class="btn btn-primary">Add First Photo</a>
         <a th:if="${session.user_id == null || session.user_id != offer.photographer.id}"
            th:href="@{/offers/{id}(id=${offer.id})}" class="btn btn-primary">Back to Offer</a>
     </section>

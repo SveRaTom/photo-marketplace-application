@@ -13,7 +13,7 @@
         <h1>Add Photo</h1>
         <p class="form-intro" th:text="${'Add a portfolio photo to ' + offer.title + '.'}"></p>
 
-        <form th:action="@{/photos/create/{offerId}(offerId=${offerId})}" th:object="${photoRequestDTO}"
+        <form th:action="@{/photos/create/{offerId}(offerId=${offerId}, from=${from})}" th:object="${photoRequestDTO}"
               th:method="post">
             <div class="form-group">
                 <label for="title">Photo Title</label>
@@ -43,7 +43,7 @@
 
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">Add Photo</button>
-                <a th:href="@{/offers/{id}/photos(id=${offerId})}" class="btn btn-secondary">Cancel</a>
+                <a th:href="${cancelUrl}" class="btn btn-secondary">Cancel</a>
             </div>
         </form>
     </section>
