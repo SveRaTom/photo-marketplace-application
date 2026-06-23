@@ -19,6 +19,11 @@ public class ReviewDTO {
     private UserDTO author;
     private OfferDTO offer;
     private BookingDTO booking;
+    private UUID authorId;
+    private UUID offerId;
+    private UUID bookingId;
+    private boolean canEdit;
+    private boolean canDelete;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
