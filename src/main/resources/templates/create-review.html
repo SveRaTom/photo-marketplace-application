@@ -12,32 +12,40 @@
     <section class="form-container">
 
         <h1>Leave a Review</h1>
+        <p class="form-intro" th:text="${'Share your experience with ' + booking.offer.photographer.displayName + ' for ' + booking.offer.title + '.'}"></p>
+
+        <div class="form-context">
+            <span>Event date: <strong th:text="${#temporals.format(booking.eventDate, 'dd MMM yyyy')}"></strong></span>
+            <span>Location: <strong th:text="${booking.location}"></strong></span>
+        </div>
 
         <form th:action="@{/reviews/create/{bookingId}(bookingId=${bookingId})}" th:object="${reviewRequestDTO}"
               th:method="post">
             <div class="form-group">
                 <label for="rating">Rating</label>
-                <select id="rating" th:field="*{rating}">
-                    <option value="">Select Rating</option>
-                    <option value="1">★☆☆☆☆</option>
-                    <option value="2">★★☆☆☆</option>
-                    <option value="3">★★★☆☆</option>
-                    <option value="4">★★★★☆</option>
-                    <option value="5">★★★★★</option>
-                </select>
+                <div class="select-wrapper">
+                    <select id="rating" class="form-control select-pretty" th:field="*{rating}">
+                        <option value="">Select Rating</option>
+                        <option value="1">★☆☆☆☆</option>
+                        <option value="2">★★☆☆☆</option>
+                        <option value="3">★★★☆☆</option>
+                        <option value="4">★★★★☆</option>
+                        <option value="5">★★★★★</option>
+                    </select>
+                </div>
                 <small class="error" th:if="${#fields.hasErrors('rating')}" th:errors="*{rating}"></small>
             </div>
 
             <div class="form-group">
                 <label for="comment">Review</label>
-                <textarea id="comment" rows="6" th:field="*{comment}"
+                <textarea id="comment" class="form-control review-textarea" rows="6" th:field="*{comment}"
                           placeholder="Describe your experience..."></textarea>
                 <small class="error" th:if="${#fields.hasErrors('comment')}" th:errors="*{comment}"></small>
             </div>
 
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">Submit Review</button>
-                <a th:href="@{/my-bookings}" class="btn btn-secondary">Cancel</a>
+                <a th:href="@{/bookings/{id}(id=${bookingId})}" class="btn btn-secondary">Cancel</a>
             </div>
         </form>
     </section>
