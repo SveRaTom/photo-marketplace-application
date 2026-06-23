@@ -20,9 +20,17 @@ public class BookingDTO {
     private String location;
     private String notes;
     private BookingStatus status;
+    private UUID clientId;
+    private UUID photographerId;
+    private UUID offerId;
     private UserDTO client;
     private OfferDTO offer;
     private ReviewDTO review;
+    private boolean canEdit;
+    private boolean canCancel;
+    private boolean canApprove;
+    private boolean canReject;
+    private boolean canReview;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
