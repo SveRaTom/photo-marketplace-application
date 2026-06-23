@@ -249,6 +249,16 @@ textarea.form-control {
     margin-top: auto;
 }
 
+.my-offer-actions {
+    align-items: flex-start;
+}
+
+.offer-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(144px, max-content));
+    gap: .75rem;
+}
+
 .offer-actions form {
     margin: 0;
 }
@@ -258,11 +268,15 @@ textarea.form-control {
     margin-left: auto;
 }
 
+.my-offer-actions .danger-action {
+    align-self: flex-end;
+}
+
 .offer-actions .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 112px;
+    min-width: 144px;
     min-height: 48px;
     padding: 0 24px;
     font-family: inherit;
@@ -1050,6 +1064,29 @@ textarea.form-control {
 
 .photo-card .offer-actions {
     padding-top: 1rem;
+}
+
+.photo-card-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: .5rem;
+}
+
+.photo-card-actions .danger-action {
+    margin-left: auto;
+}
+
+.photo-card-actions .btn {
+    width: auto;
+    min-width: 95px;
+    min-height: 50px;
+    padding: 0 16px;
+    font-size: 1rem;
+}
+
+.photo-card-actions .btn-danger {
+    min-width: 95px;
 }
 
 .photo-details-card {

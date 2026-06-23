@@ -33,7 +33,7 @@
                 <p th:if="${photo.description != null}" class="photo-description" th:text="${photo.description}"></p>
             </div>
 
-            <div class="offer-actions">
+            <div class="offer-actions photo-card-actions">
                 <a th:href="@{/photos/{id}(id=${photo.id}, from='portfolio')}" class="btn btn-primary">Details</a>
                 <a th:if="${photo.canEdit}" th:href="@{/photos/edit/{id}(id=${photo.id})}" class="btn btn-warning">Edit</a>
 

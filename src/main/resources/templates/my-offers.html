@@ -43,19 +43,21 @@
                 </div>
             </div>
 
-            <div class="offer-actions">
-                <a th:href="@{/offers/{id}(id=${offer.id})}"
-                   class="btn btn-primary">View Details
-                </a>
-                <a th:href="@{/offers/edit/{id}(id=${offer.id})}"
-                   class="btn btn-warning">Edit
-                </a>
-                <a th:href="@{/offers/{id}/photos(id=${offer.id})}"
-                   class="btn btn-secondary">Photos
-                </a>
-                <a th:href="@{/photos/create/{offerId}(offerId=${offer.id}, from='my-offers')}"
-                   class="btn btn-primary">Add Photo
-                </a>
+            <div class="offer-actions my-offer-actions">
+                <div class="offer-actions-grid">
+                    <a th:href="@{/offers/{id}(id=${offer.id})}"
+                       class="btn btn-primary">View Details
+                    </a>
+                    <a th:href="@{/offers/edit/{id}(id=${offer.id})}"
+                       class="btn btn-warning">Edit
+                    </a>
+                    <a th:href="@{/photos/create/{offerId}(offerId=${offer.id}, from='my-offers')}"
+                       class="btn btn-primary">Add Photo
+                    </a>
+                    <a th:href="@{/offers/{id}/photos(id=${offer.id})}"
+                       class="btn btn-secondary">Photos
+                    </a>
+                </div>
 
                 <form class="danger-action" th:id="'delete-offer-form-' + ${offer.id}"
                       th:action="@{/offers/delete/{id}(id=${offer.id})}" th:method="post">
