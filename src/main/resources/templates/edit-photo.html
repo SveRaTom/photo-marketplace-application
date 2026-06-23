@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/header :: head('Edit Photo')}"></head>
+
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="container">
+    <section class="form-container photo-form-container">
+        <h1>Edit Photo</h1>
+        <p class="form-intro" th:text="${'Update photo details for ' + photo.offer.title + '.'}"></p>
+
+        <form th:action="@{/photos/edit/{id}(id=${photoId})}" th:object="${photoRequestDTO}" th:method="post">
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input id="title" type="text" class="form-control" th:field="*{title}">
+                <small class="error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="imageUrl">Photo URL</label>
+                <input id="imageUrl" type="url" class="form-control" th:field="*{imageUrl}" required>
+                <small class="error" th:if="${#fields.hasErrors('imageUrl')}" th:errors="*{imageUrl}"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" class="form-control review-textarea" rows="6"
+                          th:field="*{description}"></textarea>
+                <small class="error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></small>
+            </div>
+
+            <div class="form-check">
+                <input id="coverPhoto" type="checkbox" th:field="*{coverPhoto}">
+                <label for="coverPhoto">Use as offer cover photo</label>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a th:href="@{/photos/{id}(id=${photoId})}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </section>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>
