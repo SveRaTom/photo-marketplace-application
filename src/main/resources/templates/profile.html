@@ -16,7 +16,7 @@
         </div>
 
         <div class="profile-info">
-            <h1 th:text="${user.firstName + ' ' + user.lastName}"></h1>
+            <h1 th:text="${user.displayName}"></h1>
             <p th:text="${user.email}"></p>
             <span class="role-badge" th:text="${user.role}"></span>
         </div>

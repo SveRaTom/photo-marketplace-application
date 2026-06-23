@@ -15,7 +15,7 @@
         <img th:src="${photographer.profileImageUrl}" alt="Photographer Profile">
       </div>
       <div>
-        <h1 th:text="${photographer.firstName + ' ' + photographer.lastName}"></h1>
+        <h1 th:text="${photographer.displayName}"></h1>
         <p th:text="${photographer.bio}"></p>
         <div class="profile-stats">
           <span>Rating: <strong th:text="${photographer.averageRating}"></strong></span>
@@ -43,7 +43,7 @@
 
     <div class="review-card" th:each="review : ${reviews}">
       <div class="review-header">
-        <strong th:text="${review.author.firstName + ' ' + review.author.lastName}"></strong>
+        <strong th:text="${review.author.displayName}"></strong>
         <span th:text="${review.rating + ' ★'}"></span>
       </div>
       <p th:text="${review.comment}"></p>
