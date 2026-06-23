@@ -10,6 +10,7 @@
 <main class="container">
     <section class="offer-hero">
         <img th:src="${offer.coverPhoto != null ? offer.coverPhoto.imageUrl : 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=1200&q=80'}"
+             referrerpolicy="no-referrer"
              alt="Offer Image">
         <div class="offer-info">
             <h1 th:text="${offer.title}"></h1>
@@ -21,25 +22,42 @@
             </div>
             <p class="offer-details-description" th:text="${offer.description}"></p>
             <div class="offer-price" th:text="${offer.price + ' €'}"></div>
-            <a class="btn btn-primary book-now-btn"
-               th:if="${offer.available and (session.user_id == null or session.user_id != offer.photographer.id)}"
-               th:href="@{/bookings/create/{id}(id=${offer.id})}">Book Now</a>
+            <div class="details-actions offer-details-actions">
+                <div class="details-actions-left">
+                    <a th:href="@{/offers}" class="btn btn-secondary">Back</a>
+                    <a class="btn btn-primary"
+                       th:if="${offer.available and (session.user_id == null or session.user_id != offer.photographer.id)}"
+                       th:href="@{/bookings/create/{id}(id=${offer.id})}">Book Now</a>
+                    <a class="btn btn-primary"
+                       th:if="${session.user_id != null && session.user_id == offer.photographer.id}"
+                       th:href="@{/photos/create/{offerId}(offerId=${offer.id})}">Add Photo</a>
+                </div>
+            </div>
         </div>
     </section>
 
     <section class="gallery-section" th:if="${!#lists.isEmpty(offer.photos)}">
-        <h2>Gallery</h2>
+        <div class="section-header">
+            <h2>Gallery</h2>
+            <a th:href="@{/offers/{id}/photos(id=${offer.id})}" class="btn btn-secondary">View All Photos</a>
+        </div>
         <div class="photo-grid">
-            <img th:each="photo : ${offer.photos}" th:src="${photo.imageUrl}" alt="Portfolio Photo">
+            <a th:each="photo : ${offer.photos}" th:href="@{/photos/{id}(id=${photo.id}, from='offer-details')}">
+                <img th:src="${photo.imageUrl}" referrerpolicy="no-referrer" alt="Portfolio Photo">
+            </a>
         </div>
     </section>
 
     <section class="reviews-section" th:if="${!#lists.isEmpty(offer.reviews)}">
-        <h2>Reviews</h2>
+        <div class="section-header">
+            <h2>Reviews</h2>
+            <a th:href="@{/offers/{id}/reviews(id=${offer.id})}" class="btn btn-secondary">View All Reviews</a>
+        </div>
         <div class="review-card" th:each="review : ${offer.reviews}">
-            <h3 th:text="${review.author.firstName + ' ' + review.author.lastName}"></h3>
+            <h3 th:text="${review.author.displayName}"></h3>
             <div class="rating" th:text="${review.rating + '/5'}"></div>
             <p th:text="${review.comment}"></p>
+            <span class="review-date" th:text="${#temporals.format(review.createdAt, 'dd MMM yyyy')}"></span>
         </div>
     </section>
 </main>
