@@ -229,7 +229,7 @@ Key fields and relationships:
 * `GET /offers/create` - create offer page
 * `POST /offers/create` - create offer
 * `GET /offers/edit/{id}` - edit offer page
-* `POST /offers/edit/{id}` - update offer
+* `PUT /offers/edit/{id}` - update offer
 * `POST /offers/delete/{id}` - delete offer
 
 ### Photos
@@ -241,7 +241,7 @@ Key fields and relationships:
 * `GET /photos/create/{offerId}` - create photo page
 * `POST /photos/create/{offerId}` - create photo
 * `GET /photos/edit/{id}` - edit photo page
-* `POST /photos/edit/{id}` - update photo
+* `PUT /photos/edit/{id}` - update photo
 * `POST /photos/delete/{id}` - delete photo
 * `POST /photos/{id}/cover` - set offer cover photo
 
@@ -253,7 +253,7 @@ Key fields and relationships:
 * `GET /bookings/create/{offerId}` - create booking page
 * `POST /bookings/create/{offerId}` - create booking
 * `GET /bookings/edit/{id}` - edit booking page
-* `POST /bookings/edit/{id}` - update booking
+* `PUT /bookings/edit/{id}` - update booking
 * `POST /bookings/delete/{id}` - cancel booking
 * `POST /bookings/{id}/approve` - approve booking
 * `POST /bookings/{id}/reject` - reject booking
@@ -266,7 +266,7 @@ Key fields and relationships:
 * `GET /reviews/create/{bookingId}` - create review page
 * `POST /reviews/create/{bookingId}` - create review
 * `GET /reviews/edit/{id}` - edit review page
-* `POST /reviews/edit/{id}` - update review
+* `PUT /reviews/edit/{id}` - update review
 * `POST /reviews/delete/{id}` - delete review
 
 ---
