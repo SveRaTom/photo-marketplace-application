@@ -37,7 +37,7 @@
 
             <div class="offer-actions photo-card-actions">
                 <a th:href="@{/photos/{id}(id=${photo.id})}" class="btn btn-primary">Details</a>
-                <a th:if="${photo.canEdit}" th:href="@{/photos/edit/{id}(id=${photo.id})}" class="btn btn-warning">Edit</a>
+                <a th:if="${photo.canEdit}" th:href="@{/photos/edit/{id}(id=${photo.id}, from='offer-photos')}" class="btn btn-warning">Edit</a>
 
                 <form th:if="${photo.canDelete}" class="danger-action"
                       th:action="@{/photos/delete/{id}(id=${photo.id})}" th:method="post">

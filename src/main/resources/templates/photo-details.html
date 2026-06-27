@@ -44,7 +44,7 @@
         <div class="details-actions">
             <div class="details-actions-left">
                 <a th:href="${backUrl}" class="btn btn-secondary">Back</a>
-                <a th:if="${photo.canEdit}" th:href="@{/photos/edit/{id}(id=${photo.id})}"
+                <a th:if="${photo.canEdit}" th:href="@{/photos/edit/{id}(id=${photo.id}, from=${from})}"
                    class="btn btn-warning">Edit Photo</a>
 
                 <form th:if="${photo.canSetAsCover}" th:action="@{/photos/{id}/cover(id=${photo.id})}"

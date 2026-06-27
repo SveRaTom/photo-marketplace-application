@@ -62,6 +62,7 @@ public class PhotoController {
         final PhotoDTO photo = this.photoService.getPhotoById(id, getOptionalUserId(httpSession));
         final ModelAndView modelAndView = new ModelAndView("photo-details");
         modelAndView.addObject("photo", photo);
+        modelAndView.addObject("from", from);
         modelAndView.addObject("backUrl", resolveBackUrl(from, photo));
 
         return modelAndView;
@@ -105,27 +106,37 @@ public class PhotoController {
     }
 
     @GetMapping("/photos/edit/{id}")
-    public ModelAndView getEditPhotoPage(@PathVariable final UUID id, final HttpSession httpSession) {
+    public ModelAndView getEditPhotoPage(@PathVariable final UUID id,
+                                         @RequestParam(required = false) final String from,
+                                         final HttpSession httpSession) {
+
+        final PhotoDTO photo = this.photoService.getPhotoById(id, getUserId(httpSession));
+
         final ModelAndView modelAndView = new ModelAndView("edit-photo");
         modelAndView.addObject("photoId", id);
-        modelAndView.addObject("photo", this.photoService.getPhotoById(id, getUserId(httpSession)));
+        modelAndView.addObject("photo", photo);
         modelAndView.addObject("photoRequestDTO", this.photoService.getPhotoForEdit(id, getUserId(httpSession)));
+        addEditPhotoNavigation(modelAndView, from, photo);
 
         return modelAndView;
     }
 
     @PutMapping("/photos/edit/{id}")
     public ModelAndView editPhoto(@PathVariable final UUID id,
+                                  @RequestParam(required = false) final String from,
                                   @Valid final PhotoRequestDTO photoRequestDTO,
                                   final BindingResult bindingResult,
                                   final HttpSession httpSession) {
 
         if (bindingResult.hasErrors()) {
+            final PhotoDTO photo = this.photoService.getPhotoById(id, getUserId(httpSession));
+
             final ModelAndView modelAndView = new ModelAndView("edit-photo");
             modelAndView.addObject("photoId", id);
-            modelAndView.addObject("photo", this.photoService.getPhotoById(id, getUserId(httpSession)));
+            modelAndView.addObject("photo", photo);
             modelAndView.addObject("photoRequestDTO", photoRequestDTO);
             modelAndView.addObject("org.springframework.validation.BindingResult.photoRequestDTO", bindingResult);
+            addEditPhotoNavigation(modelAndView, from, photo);
 
             return modelAndView;
         }
@@ -175,8 +186,9 @@ public class PhotoController {
     }
 
     private static void addCreatePhotoNavigation(final ModelAndView modelAndView,
-                                                final UUID offerId,
-                                                final String from) {
+                                                 final UUID offerId,
+                                                 final String from) {
+
         final String source = resolveCreatePhotoSource(from);
 
         modelAndView.addObject("from", source);
@@ -185,6 +197,14 @@ public class PhotoController {
             case "my-offers" -> "/my-offers";
             default -> "/offers/" + offerId + "/photos";
         });
+    }
+
+    private static void addEditPhotoNavigation(final ModelAndView modelAndView,
+                                               final String from,
+                                               final PhotoDTO photo) {
+
+        modelAndView.addObject("from", from);
+        modelAndView.addObject("cancelUrl", resolveEditPhotoCancelUrl(from, photo));
     }
 
     private static String resolveCreatedPhotoSource(final String from) {
@@ -197,5 +217,21 @@ public class PhotoController {
         }
 
         return "offer-photos";
+    }
+
+    private static String resolveEditPhotoCancelUrl(final String from, final PhotoDTO photo) {
+        if ("portfolio".equals(from)) {
+            return "/portfolio";
+        }
+
+        if ("offer-photos".equals(from)) {
+            return "/offers/" + photo.getOfferId() + "/photos";
+        }
+
+        if ("offer-details".equals(from)) {
+            return "/offers/" + photo.getOfferId();
+        }
+
+        return "/photos/" + photo.getId();
     }
 }
