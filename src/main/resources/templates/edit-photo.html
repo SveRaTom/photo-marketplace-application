@@ -22,7 +22,9 @@
 
             <div class="form-group">
                 <label for="imageUrl">Photo URL</label>
-                <input id="imageUrl" type="url" class="form-control" th:field="*{imageUrl}" required>
+                <input id="imageUrl" type="url" class="form-control" th:field="*{imageUrl}"
+                       placeholder="Direct image URL" required>
+                <small class="form-hint">Please use a direct image URL, not a photo page URL.</small>
                 <small class="error" th:if="${#fields.hasErrors('imageUrl')}" th:errors="*{imageUrl}"></small>
             </div>
 

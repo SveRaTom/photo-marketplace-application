@@ -616,6 +616,14 @@ textarea.form-control {
     margin: -.75rem 0 1.5rem;
 }
 
+.form-hint {
+    display: block;
+    margin-top: .45rem;
+    color: #64748b;
+    font-size: .9rem;
+    line-height: 1.45;
+}
+
 .form-context {
     display: flex;
     flex-direction: column;
