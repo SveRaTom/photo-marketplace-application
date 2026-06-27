@@ -976,6 +976,14 @@ textarea.form-control {
     margin-bottom: .75rem;
 }
 
+.gallery-section {
+    margin-bottom: 4rem;
+}
+
+.reviews-section {
+    margin-bottom: 5rem;
+}
+
 /* PHOTO GRID */
 
 .photo-grid {
@@ -1337,7 +1345,16 @@ textarea.form-control {
     .offer-hero {
         grid-template-columns: 1fr;
         gap: 1.5rem;
-        margin-bottom: 4rem;
+        margin-bottom: 2rem;
+        padding-top: 1.5rem;
+    }
+
+    .gallery-section {
+        margin-bottom: 2.25rem;
+    }
+
+    .reviews-section {
+        margin-bottom: 5rem;
     }
 
     .page-header {
