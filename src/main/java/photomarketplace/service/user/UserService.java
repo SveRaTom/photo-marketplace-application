@@ -6,13 +6,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import photomarketplace.model.dto.user.UserDTO;
 import photomarketplace.mapper.user.UserMapper;
-import photomarketplace.model.dto.user.UserLoginRequestDTO;
 import photomarketplace.model.dto.user.UserRegisterRequestDTO;
 import photomarketplace.model.entity.user.User;
 import photomarketplace.repository.user.UserRepository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -26,17 +24,6 @@ public class UserService {
     public UserService(final PasswordEncoder passwordEncoder, final UserRepository userRepository) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
-    }
-
-    public UserDTO login(final UserLoginRequestDTO userLoginRequest) {
-        final Optional<User> optionalUser = this.userRepository.findByEmail(userLoginRequest.getEmail());
-
-        if (optionalUser.isEmpty() ||
-                !this.passwordEncoder.matches(userLoginRequest.getPassword(), optionalUser.get().getPassword())) {
-            throw new RuntimeException("Email or password do not match!");
-        }
-
-        return UserMapper.toUserDTO(optionalUser.get());
     }
 
     public void register(final UserRegisterRequestDTO userRegisterRequest) {

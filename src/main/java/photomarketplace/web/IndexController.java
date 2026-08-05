@@ -8,6 +8,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import photomarketplace.model.dto.user.UserDTO;
 import photomarketplace.model.dto.user.UserLoginRequestDTO;
@@ -33,44 +34,16 @@ public class IndexController {
     }
 
     @GetMapping("/login")
-    public ModelAndView getLoginPage() {
+    public ModelAndView getLoginPage(@RequestParam(required = false) final String error) {
         final UserLoginRequestDTO userLoginRequest = UserLoginRequestDTO.builder().build();
 
         final ModelAndView modelAndView = new ModelAndView("login");
         modelAndView.addObject("userLoginRequest", userLoginRequest);
+        if (error != null) {
+            modelAndView.addObject("loginError", "Invalid email or password.");
+        }
 
         return modelAndView;
-    }
-
-    @PostMapping("/login")
-    public ModelAndView login(@Valid final UserLoginRequestDTO userLoginRequest,
-                              final BindingResult bindingResult,
-                              final HttpSession httpSession) {
-
-        if (bindingResult.hasErrors()) {
-            final ModelAndView modelAndView = new ModelAndView("login");
-            modelAndView.addObject("userLoginRequest", userLoginRequest);
-            // Ensure the BindingResult is available in the model under the expected key
-            modelAndView.addObject("org.springframework.validation.BindingResult.userLoginRequest", bindingResult);
-
-            return modelAndView;
-        }
-
-        try {
-            final UserDTO user = this.userService.login(userLoginRequest);
-            httpSession.setAttribute("user_id", user.getId());
-            httpSession.setAttribute("user_role", user.getRole().name());
-
-            return new ModelAndView("redirect:/home");
-        } catch (RuntimeException ex) {
-            // Authentication failed - return to login page with a user-friendly error message
-            final ModelAndView modelAndView = new ModelAndView("login");
-            modelAndView.addObject("userLoginRequest", userLoginRequest);
-            modelAndView.addObject("org.springframework.validation.BindingResult.userLoginRequest", bindingResult);
-            modelAndView.addObject("loginError", ex.getMessage() == null ? "Invalid credentials" : ex.getMessage());
-
-            return modelAndView;
-        }
     }
 
     @GetMapping("/register")
@@ -90,7 +63,6 @@ public class IndexController {
         if (bindingResult.hasErrors()) {
             final ModelAndView modelAndView = new ModelAndView("register");
             modelAndView.addObject("userRegisterRequest", userRegisterRequest);
-            // Ensure the BindingResult is available in the model under the expected key
             modelAndView.addObject("org.springframework.validation.BindingResult.userRegisterRequest", bindingResult);
 
             return modelAndView;
@@ -116,10 +88,4 @@ public class IndexController {
         return modelAndView;
     }
 
-    @PostMapping("/logout")
-    public ModelAndView logout(final HttpSession httpSession) {
-        httpSession.invalidate();
-
-        return new ModelAndView("redirect:/");
-    }
 }
