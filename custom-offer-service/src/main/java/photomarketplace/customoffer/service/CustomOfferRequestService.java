@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import photomarketplace.customoffer.exception.CustomOfferNotFoundException;
 import photomarketplace.customoffer.exception.CustomOfferOperationException;
 import photomarketplace.customoffer.model.dto.customoffer.CreateCustomOfferRequestDTO;
 import photomarketplace.customoffer.model.dto.customoffer.CustomOfferDecisionDTO;
@@ -72,8 +73,8 @@ public class CustomOfferRequestService {
     }
 
     public CustomOfferResponseDTO decide(final UUID customOfferId,
-                                      final UUID photographerId,
-                                      final CustomOfferDecisionRequestDTO request) {
+                                         final UUID photographerId,
+                                         final CustomOfferDecisionRequestDTO request) {
 
         final CustomOfferRequest customOffer = getCustomOffer(customOfferId);
         ensurePhotographerOwnsCustomOffer(customOffer, photographerId);
@@ -114,8 +115,7 @@ public class CustomOfferRequestService {
 
     private CustomOfferRequest getCustomOffer(final UUID customOfferId) {
         return this.customOfferRequestRepository.findById(customOfferId)
-                .orElseThrow(() -> new CustomOfferOperationException(
-                        "Custom offer request with id '%s' does not exist.".formatted(customOfferId)));
+                .orElseThrow(() -> new CustomOfferNotFoundException(customOfferId));
     }
 
     private static void ensurePhotographerOwnsCustomOffer(final CustomOfferRequest customOffer,
