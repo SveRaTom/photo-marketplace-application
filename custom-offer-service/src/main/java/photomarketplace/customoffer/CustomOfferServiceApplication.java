@@ -1,12 +1,12 @@
-package photomarketplace.quote;
+package photomarketplace.customoffer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class QuoteServiceApplication {
+public class CustomOfferServiceApplication {
 
     public static void main(final String[] args) {
-        SpringApplication.run(QuoteServiceApplication.class, args);
+        SpringApplication.run(CustomOfferServiceApplication.class, args);
     }
 }
