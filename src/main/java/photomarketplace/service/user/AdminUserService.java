@@ -64,14 +64,12 @@ public class AdminUserService {
                 administratorId, targetUserId, previousRole, roleUpdate.getRole());
     }
 
-    private User requireAdministrator(final UUID administratorId) {
+    private void requireAdministrator(final UUID administratorId) {
         final User administrator = getUser(administratorId);
 
         if (administrator.getRole() != UserRole.ADMIN) {
             throw new UserRoleManagementException("Only administrators can manage user roles.");
         }
-
-        return administrator;
     }
 
     private User getUser(final UUID userId) {
