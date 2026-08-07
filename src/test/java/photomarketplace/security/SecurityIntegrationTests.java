@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.util.UUID;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
@@ -103,6 +104,30 @@ class SecurityIntegrationTests {
                         .param("eventDate", "2099-01-01")
                         .param("location", "Sofia")
                         .param("message", "Outdoor portrait photography session"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void clientCustomOffersPageRedirectsUnauthenticatedUserToLogin() throws Exception {
+        this.mockMvc.perform(get("/custom-offers"))
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("http://localhost/login"));
+    }
+
+    @Test
+    void photographerCannotAccessClientCustomOffersPage() throws Exception {
+        final MockHttpSession photographerSession = login("photographer@example.com", "testPhotographerPassword");
+
+        this.mockMvc.perform(get("/custom-offers").session(photographerSession))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void customOfferWithdrawalWithoutCsrfTokenIsRejected() throws Exception {
+        final MockHttpSession clientSession = login("client@example.com", "testClientPassword");
+
+        this.mockMvc.perform(delete("/custom-offers/" + UUID.randomUUID())
+                        .session(clientSession))
                 .andExpect(status().isForbidden());
     }
 
