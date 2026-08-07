@@ -3,6 +3,7 @@ package photomarketplace.service.review;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import photomarketplace.config.cache.EvictOfferCaches;
 import photomarketplace.exception.ForbiddenOperationException;
 import photomarketplace.exception.InvalidOperationException;
 import photomarketplace.exception.ResourceNotFoundException;
@@ -85,6 +86,7 @@ public class ReviewService {
                 .build();
     }
 
+    @EvictOfferCaches
     public UUID createReview(final UUID bookingId,
                              final ReviewRequestDTO reviewRequest,
                              final UUID currentUserId) {
@@ -104,6 +106,7 @@ public class ReviewService {
         return savedReview.getId();
     }
 
+    @EvictOfferCaches
     public void updateReview(final UUID reviewId,
                              final ReviewRequestDTO reviewRequest,
                              final UUID currentUserId) {
@@ -116,6 +119,7 @@ public class ReviewService {
         this.reviewRepository.save(review);
     }
 
+    @EvictOfferCaches
     public void deleteReview(final UUID reviewId, final UUID currentUserId) {
         final Review review = getOwnedReview(reviewId, currentUserId);
 

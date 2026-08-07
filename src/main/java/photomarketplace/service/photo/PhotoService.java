@@ -3,6 +3,7 @@ package photomarketplace.service.photo;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import photomarketplace.config.cache.EvictOfferCaches;
 import photomarketplace.exception.ForbiddenOperationException;
 import photomarketplace.exception.ResourceNotFoundException;
 import photomarketplace.mapper.user.UserMapper;
@@ -63,6 +64,7 @@ public class PhotoService {
         return toOfferSummaryDTO(getOwnedOffer(offerId, photographerId));
     }
 
+    @EvictOfferCaches
     public UUID createPhoto(final UUID offerId,
                             final PhotoRequestDTO photoRequest,
                             final UUID photographerId) {
@@ -86,6 +88,7 @@ public class PhotoService {
         return savedPhoto.getId();
     }
 
+    @EvictOfferCaches
     public void updatePhoto(final UUID photoId,
                             final PhotoRequestDTO photoRequest,
                             final UUID photographerId) {
@@ -108,6 +111,7 @@ public class PhotoService {
         this.offerRepository.save(offer);
     }
 
+    @EvictOfferCaches
     public void deletePhoto(final UUID photoId, final UUID photographerId) {
         final Photo photo = getOwnedPhoto(photoId, photographerId);
         final Offer offer = photo.getOffer();
@@ -120,6 +124,7 @@ public class PhotoService {
         this.photoRepository.delete(photo);
     }
 
+    @EvictOfferCaches
     public void setCoverPhoto(final UUID photoId, final UUID photographerId) {
         final Photo photo = getOwnedPhoto(photoId, photographerId);
         final Offer offer = photo.getOffer();

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import photomarketplace.config.cache.EvictOfferCaches;
 import photomarketplace.exception.user.UserRoleManagementException;
 import photomarketplace.mapper.user.UserMapper;
 import photomarketplace.model.dto.user.UserDTO;
@@ -35,6 +36,7 @@ public class AdminUserService {
                 .toList();
     }
 
+    @EvictOfferCaches
     public void updateUserRole(
             final UUID administratorId,
             final UUID targetUserId,

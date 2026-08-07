@@ -2,7 +2,10 @@ package photomarketplace.service.offer;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import photomarketplace.config.cache.CacheNames;
+import photomarketplace.config.cache.EvictOfferCaches;
 import photomarketplace.exception.ForbiddenOperationException;
 import photomarketplace.exception.ResourceNotFoundException;
 import photomarketplace.mapper.user.UserMapper;
@@ -41,18 +44,21 @@ public class OfferService {
         this.userService = userService;
     }
 
+    @Cacheable(cacheNames = CacheNames.OFFER_CATALOG)
     public List<OfferDTO> getAllOffers() {
         return this.offerRepository.findAll().stream()
                 .map(this::toOfferDTO)
                 .toList();
     }
 
+    @Cacheable(cacheNames = CacheNames.PHOTOGRAPHER_OFFERS, key = "#photographerId")
     public List<OfferDTO> getOffersByPhotographer(final UUID photographerId) {
         return this.offerRepository.findAllByPhotographerId(photographerId).stream()
                 .map(this::toOfferDTO)
                 .toList();
     }
 
+    @Cacheable(cacheNames = CacheNames.OFFER_DETAILS, key = "#id")
     public OfferDTO getOfferById(final UUID id) {
         return toOfferDTO(getOffer(id));
     }
@@ -72,6 +78,7 @@ public class OfferService {
                 .build();
     }
 
+    @EvictOfferCaches
     public UUID createOffer(final OfferRequestDTO offerRequest, final UUID photographerId) {
         final User photographer = this.userService.getUser(photographerId);
 
@@ -92,6 +99,7 @@ public class OfferService {
         return savedOffer.getId();
     }
 
+    @EvictOfferCaches
     public void updateOffer(final UUID id, final OfferRequestDTO offerRequest, final UUID photographerId) {
         final Offer offer = getOwnedOffer(id, photographerId);
 
@@ -106,6 +114,7 @@ public class OfferService {
         this.offerRepository.save(offer);
     }
 
+    @EvictOfferCaches
     public void deleteOffer(final UUID id, final UUID photographerId) {
         final Offer offer = getOwnedOffer(id, photographerId);
 

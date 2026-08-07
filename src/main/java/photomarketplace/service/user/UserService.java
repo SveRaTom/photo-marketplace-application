@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import photomarketplace.config.cache.EvictOfferCaches;
 import photomarketplace.exception.ResourceNotFoundException;
 import photomarketplace.exception.user.ProfileUpdateException;
 import photomarketplace.exception.user.UserRegistrationException;
@@ -83,6 +84,7 @@ public class UserService {
                 .build();
     }
 
+    @EvictOfferCaches
     public void updateProfile(final UUID userId, final ProfileUpdateDTO profileUpdate) {
         requireProfileDetails(profileUpdate);
 
