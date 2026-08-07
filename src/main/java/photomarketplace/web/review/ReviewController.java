@@ -153,6 +153,10 @@ public class ReviewController {
             return "/reviews";
         }
 
+        if ("dashboard".equals(from)) {
+            return "/dashboard";
+        }
+
         return "/offers/" + review.getOfferId() + "/reviews";
     }
 }

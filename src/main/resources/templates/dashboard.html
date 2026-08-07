@@ -2,79 +2,123 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head th:replace="~{fragments/header :: head('Dashboard')}"></head>
-    <title>Dashboard</title>
+
 <body>
 
-<header th:replace="~{fragments/header :: header}"></header>
-<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+<div th:replace="~{fragments/header :: header}"></div>
 
 <main class="container">
-
     <section class="page-header">
-        <h1>Dashboard</h1>
-        <p>Welcome back, <span th:text="${user.firstName}"></span>!</p>
+        <div>
+            <h1>Dashboard</h1>
+            <p>Welcome back, <span th:text="${dashboard.photographer.firstName}"></span>.</p>
+        </div>
+        <div class="page-actions">
+            <a th:href="@{/photographer/custom-offers}" class="btn btn-secondary">Custom Requests</a>
+            <a th:href="@{/offers/create}" class="btn btn-primary">Create Offer</a>
+        </div>
     </section>
 
     <section class="dashboard-stats">
-        <div class="stat-card">
-            <h3>Total Offers</h3>
-            <div class="stat-number" th:text="${totalOffers}"></div>
-        </div>
-        <div class="stat-card">
-            <h3>Total Bookings</h3>
-            <div class="stat-number" th:text="${totalBookings}"></div>
-        </div>
-        <div class="stat-card">
-            <h3>Completed Bookings</h3>
-            <div class="stat-number" th:text="${completedBookings}"></div>
-        </div>
-        <div class="stat-card">
-            <h3>Average Rating</h3>
-            <div class="stat-number" th:text="${averageRating}"></div>
-        </div>
+        <article class="stat-card">
+            <h2>Total Offers</h2>
+            <div class="stat-number" th:text="${dashboard.totalOffers}"></div>
+            <a th:href="@{/my-offers}">Manage offers</a>
+        </article>
+        <article class="stat-card">
+            <h2>Available Offers</h2>
+            <div class="stat-number" th:text="${dashboard.availableOffers}"></div>
+            <span>Visible to clients</span>
+        </article>
+        <article class="stat-card">
+            <h2>Total Bookings</h2>
+            <div class="stat-number" th:text="${dashboard.totalBookings}"></div>
+            <a th:href="@{/bookings}">View bookings</a>
+        </article>
+        <article class="stat-card">
+            <h2>Pending Requests</h2>
+            <div class="stat-number" th:text="${dashboard.pendingBookings}"></div>
+            <span>Awaiting your decision</span>
+        </article>
+        <article class="stat-card">
+            <h2>Average Rating</h2>
+            <div class="stat-number"><span th:text="${dashboard.averageRating}"></span>/5</div>
+            <a th:href="@{/reviews}">View reviews</a>
+        </article>
     </section>
 
     <section class="dashboard-grid">
-        <div class="dashboard-widget">
-
+        <article class="dashboard-widget">
             <div class="widget-header">
-                <h2>Recent Bookings</h2>
+                <div>
+                    <h2>Upcoming Bookings</h2>
+                    <p>Pending and approved sessions ordered by event date.</p>
+                </div>
+                <a th:href="@{/bookings}">View all</a>
             </div>
 
-            <table class="dashboard-table">
-                <thead>
-                <tr>
-                    <th>Client</th>
-                    <th>Offer</th>
-                    <th>Status</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="booking : ${recentBookings}">
-                    <td th:text="${booking.client.displayName}"></td>
-                    <td th:text="${booking.offer.title}"></td>
-                    <td>
-                        <span class="badge" th:text="${booking.status}"></span>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
+            <div class="dashboard-table-wrapper" th:if="${!#lists.isEmpty(dashboard.upcomingBookings)}">
+                <table class="dashboard-table">
+                    <thead>
+                    <tr>
+                        <th>Event</th>
+                        <th>Client</th>
+                        <th>Offer</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="booking : ${dashboard.upcomingBookings}">
+                        <td th:text="${#temporals.format(booking.eventDate, 'dd MMM yyyy')}"></td>
+                        <td th:text="${booking.client.displayName}"></td>
+                        <td th:text="${booking.offer.title}"></td>
+                        <td>
+                            <span th:class="'status-badge status-' + ${#strings.toLowerCase(booking.status.name())}"
+                                  th:text="${booking.status}"></span>
+                        </td>
+                        <td>
+                            <a th:href="@{/bookings/{id}(id=${booking.id})}" class="dashboard-link">Details</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
 
-        <div class="dashboard-widget">
+            <div class="dashboard-empty" th:if="${#lists.isEmpty(dashboard.upcomingBookings)}">
+                <p>No upcoming bookings require attention.</p>
+            </div>
+        </article>
+
+        <article class="dashboard-widget">
             <div class="widget-header">
-                <h2>Recent Reviews</h2>
+                <div>
+                    <h2>Recent Reviews</h2>
+                    <p>Latest feedback from your clients.</p>
+                </div>
+                <a th:href="@{/reviews}">View all</a>
             </div>
-            <div class="review-widget" th:each="review : ${recentReviews}">
-                <h4 th:text="${review.author.displayName}"></h4>
-                <p th:text="${review.comment}"></p>
-                <span class="rating" th:text="${review.rating + '/5'}"></span>
+
+            <div class="review-widget" th:each="review : ${dashboard.recentReviews}">
+                <div class="review-top">
+                    <div>
+                        <h3 th:text="${review.author.displayName}"></h3>
+                        <p class="review-offer" th:text="${review.offer.title}"></p>
+                    </div>
+                    <span class="rating-badge"><span th:text="${review.rating}"></span>/5</span>
+                </div>
+                <p class="dashboard-review-comment" th:text="${review.comment}"></p>
+                <a th:href="@{/reviews/{id}(id=${review.id}, from='dashboard')}" class="dashboard-link">Details</a>
             </div>
-        </div>
+
+            <div class="dashboard-empty" th:if="${#lists.isEmpty(dashboard.recentReviews)}">
+                <p>No client reviews have been received yet.</p>
+            </div>
+        </article>
     </section>
 </main>
 
-<footer th:replace="~{fragments/footer :: footer}"></footer>
+<div th:replace="~{fragments/footer :: footer}"></div>
 
 </body>
 </html>

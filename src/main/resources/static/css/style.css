@@ -528,6 +528,23 @@ textarea.form-control {
     margin-top: .5rem;
 }
 
+.stat-card h2 {
+    font-size: 1rem;
+    color: #475569;
+}
+
+.stat-card a,
+.stat-card > span,
+.widget-header p {
+    color: #64748b;
+    font-size: .9rem;
+}
+
+.stat-card a {
+    display: inline-block;
+    margin-top: .5rem;
+}
+
 .dashboard-grid {
     display: grid;
     grid-template-columns: 2fr 1fr;
@@ -539,6 +556,43 @@ textarea.form-control {
     border-radius: 12px;
     padding: 2rem;
     box-shadow: 0 4px 14px rgba(0, 0, 0, .08);
+}
+
+.widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.widget-header p {
+    margin-top: .35rem;
+}
+
+.widget-header a,
+.dashboard-link {
+    color: #2563eb;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.dashboard-table-wrapper {
+    overflow-x: auto;
+}
+
+.dashboard-empty {
+    padding: 2rem 1rem;
+    border-radius: 10px;
+    background: #f8fafc;
+    color: #64748b;
+    text-align: center;
+}
+
+.dashboard-review-comment {
+    margin: .8rem 0;
+    color: #334155;
+    line-height: 1.6;
 }
 
 /* TABLES */
@@ -1372,6 +1426,10 @@ textarea.form-control {
 }
 
 @media (max-width: 820px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
     .bookings-grid {
         grid-template-columns: 1fr;
     }
