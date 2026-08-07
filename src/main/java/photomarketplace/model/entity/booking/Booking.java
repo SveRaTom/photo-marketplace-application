@@ -1,8 +1,8 @@
 package photomarketplace.model.entity.booking;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -28,7 +28,7 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Future
+    @NotNull
     @Column(nullable = false)
     private LocalDate eventDate;
 

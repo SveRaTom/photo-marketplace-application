@@ -20,6 +20,7 @@ import photomarketplace.repository.booking.BookingRepository;
 import photomarketplace.repository.offer.OfferRepository;
 import photomarketplace.service.user.UserService;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -138,6 +139,23 @@ public class BookingService {
 
         booking.setStatus(BookingStatus.REJECTED);
         this.bookingRepository.save(booking);
+    }
+
+    public int completePastApprovedBookings(final LocalDate today) {
+        if (today == null) {
+            throw new IllegalArgumentException("Booking completion date is required.");
+        }
+
+        final List<Booking> pastApprovedBookings = this.bookingRepository
+                .findAllByStatusAndEventDateBefore(BookingStatus.APPROVED, today);
+
+        pastApprovedBookings.forEach(booking -> booking.setStatus(BookingStatus.COMPLETED));
+
+        if (!pastApprovedBookings.isEmpty()) {
+            this.bookingRepository.saveAll(pastApprovedBookings);
+        }
+
+        return pastApprovedBookings.size();
     }
 
     private Booking getVisibleBooking(final UUID bookingId, final UUID currentUserId) {

@@ -21,6 +21,7 @@ import photomarketplace.repository.offer.OfferRepository;
 import photomarketplace.repository.photo.PhotoRepository;
 import photomarketplace.service.user.UserService;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -121,6 +122,24 @@ public class OfferService {
         offer.setCoverPhoto(null);
         this.offerRepository.saveAndFlush(offer);
         this.offerRepository.delete(offer);
+    }
+
+    @EvictOfferCaches
+    public int expireStaleOffers(final LocalDateTime cutoff) {
+        if (cutoff == null) {
+            throw new IllegalArgumentException("Offer expiration cutoff is required.");
+        }
+
+        final List<Offer> staleOffers =
+                this.offerRepository.findAllByIsAvailableTrueAndUpdatedAtBefore(cutoff);
+
+        staleOffers.forEach(offer -> offer.setAvailable(false));
+
+        if (!staleOffers.isEmpty()) {
+            this.offerRepository.saveAll(staleOffers);
+        }
+
+        return staleOffers.size();
     }
 
     private void upsertCoverPhoto(final Offer offer, final OfferRequestDTO offerRequest) {
