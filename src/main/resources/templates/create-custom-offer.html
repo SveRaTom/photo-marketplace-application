@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Request Custom Offer')}"></head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="container">
+    <section class="form-container">
+        <h1>Request a Custom Offer</h1>
+        <p class="form-intro">
+            Tell <strong th:text="${offer.photographer.displayName}"></strong> what you need for
+            <strong th:text="${offer.title}"></strong>. The photographer can then propose a final price.
+        </p>
+
+        <div class="form-context">
+            <span th:text="${'Standard price: ' + offer.price + ' €'}"></span>
+            <span th:text="${'Standard duration: ' + offer.durationHours + ' hours'}"></span>
+        </div>
+
+        <div class="alert-error" role="alert" th:if="${formError != null}" th:text="${formError}"></div>
+
+        <form th:action="@{/offers/{offerId}/custom-offer(offerId=${offerId})}"
+              th:object="${customOfferRequestDTO}"
+              th:method="post">
+            <div class="form-group">
+                <label for="eventDate">Event Date</label>
+                <input id="eventDate" class="form-control" type="date" th:field="*{eventDate}"
+                       th:min="${minimumEventDate}">
+                <small class="error" th:if="${#fields.hasErrors('eventDate')}" th:errors="*{eventDate}"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="location">Event Location</label>
+                <input id="location" class="form-control" type="text" th:field="*{location}"
+                       maxlength="255" placeholder="City, venue, or address">
+                <small class="error" th:if="${#fields.hasErrors('location')}" th:errors="*{location}"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="message">What do you need?</label>
+                <textarea id="message" class="form-control" rows="7" th:field="*{message}"
+                          minlength="10" maxlength="2000"
+                          placeholder="Describe the session, desired style, schedule, and special requirements"></textarea>
+                <small class="form-hint">Provide enough detail for the photographer to prepare an accurate offer.</small>
+                <small class="error" th:if="${#fields.hasErrors('message')}" th:errors="*{message}"></small>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Send Request</button>
+                <a th:href="@{/offers/{offerId}(offerId=${offerId})}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </section>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

@@ -53,6 +53,7 @@ public class SecurityConfiguration {
                                 "/dashboard")
                         .hasRole("PHOTOGRAPHER")
                         .requestMatchers(
+                                "/offers/*/custom-offer",
                                 "/bookings/create/*",
                                 "/bookings/edit/*",
                                 "/bookings/delete/*",

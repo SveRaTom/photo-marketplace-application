@@ -467,6 +467,14 @@ textarea.form-control {
     margin-bottom: 20px;
 }
 
+.alert-error {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
 .footer {
     background: #111827;
     color: white;
