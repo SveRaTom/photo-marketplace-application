@@ -20,6 +20,9 @@
             <li sec:authorize="isAuthenticated()">
                 <a th:href="@{/bookings}">Bookings</a>
             </li>
+            <li sec:authorize="hasRole('CLIENT')">
+                <a th:href="@{/custom-offers}">Custom Offers</a>
+            </li>
             <li sec:authorize="isAuthenticated()">
                 <a th:href="@{/reviews}">Reviews</a>
             </li>
