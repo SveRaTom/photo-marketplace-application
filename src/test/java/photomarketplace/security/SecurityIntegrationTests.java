@@ -79,6 +79,34 @@ class SecurityIntegrationTests {
     }
 
     @Test
+    void customOfferPageRedirectsUnauthenticatedUserToLogin() throws Exception {
+        this.mockMvc.perform(get("/offers/" + UUID.randomUUID() + "/custom-offer"))
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("http://localhost/login"));
+    }
+
+    @Test
+    void photographerCannotAccessClientCustomOfferPage() throws Exception {
+        final MockHttpSession photographerSession = login("photographer@example.com", "testPhotographerPassword");
+
+        this.mockMvc.perform(get("/offers/" + UUID.randomUUID() + "/custom-offer")
+                        .session(photographerSession))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void customOfferSubmissionWithoutCsrfTokenIsRejected() throws Exception {
+        final MockHttpSession clientSession = login("client@example.com", "testClientPassword");
+
+        this.mockMvc.perform(post("/offers/" + UUID.randomUUID() + "/custom-offer")
+                        .session(clientSession)
+                        .param("eventDate", "2099-01-01")
+                        .param("location", "Sofia")
+                        .param("message", "Outdoor portrait photography session"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     void authenticatedUserCanLogout() throws Exception {
         final MockHttpSession clientSession = login("client@example.com", "testClientPassword");
 
