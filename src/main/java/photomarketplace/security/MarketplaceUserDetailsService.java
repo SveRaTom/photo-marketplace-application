@@ -18,7 +18,7 @@ public class MarketplaceUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(final String email) throws UsernameNotFoundException {
-        final User user = this.userRepository.findByEmail(email)
+        final User user = this.userRepository.findByEmailIgnoreCase(email.trim())
                 .orElseThrow(() -> new UsernameNotFoundException("Invalid email or password."));
 
         return new MarketplaceUserDetails(user);

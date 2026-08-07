@@ -34,6 +34,7 @@ public class UserMapper {
                 .displayName(displayName(user))
                 .username(user.getUsername())
                 .email(user.getEmail())
+                .profileImageUrl(user.getProfileImageUrl())
                 .isActive(user.isActive())
                 .role(user.getRole())
                 .build();

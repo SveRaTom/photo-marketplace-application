@@ -3,6 +3,7 @@ package photomarketplace.model.entity.user;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -56,7 +57,9 @@ public class User {
     @Column(nullable = false)
     private UserRole role;
 
-    @Column
+    @Size(max = 500)
+    @Pattern(regexp = "^https?://.+")
+    @Column(length = 500)
     private String profileImageUrl;
 
     @Column

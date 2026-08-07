@@ -1,51 +1,92 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="~{fragments/header :: head('Profile')}"></head>
+<head th:replace="~{fragments/header :: head('Profile')}">
     <title>Profile</title>
+</head>
+
 <body>
 
-<header th:replace="~{fragments/header :: header}"></header>
-<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+<div th:replace="~{fragments/header :: header}"></div>
 
-<main class="container">
-    <section class="profile-card">
-
-        <div class="profile-avatar">
-            <img th:src="${user.profileImageUrl != null ? user.profileImageUrl : '/images/default-avatar.jpg'}" alt="Profile Photo">
+<main class="container profile-page">
+    <section class="page-header">
+        <div>
+            <h1>My Profile</h1>
+            <p>Review your account information and keep your personal details current.</p>
         </div>
-
-        <div class="profile-info">
-            <h1 th:text="${user.displayName}"></h1>
-            <p th:text="${user.email}"></p>
-            <span class="role-badge" th:text="${user.role}"></span>
-        </div>
-
     </section>
 
-    <section class="form-section">
-        <form th:action="@{/profile/update}" th:object="${user}" method="post">
+    <div class="alert-success" role="status" th:if="${successMessage != null}" th:text="${successMessage}"></div>
 
-            <div class="form-group">
-                <label>First Name</label>
-                <input type="text" th:field="*{firstName}">
-            </div>
-            <div class="form-group">
-                <label>Last Name</label>
-                <input type="text" th:field="*{lastName}">
-            </div>
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" th:field="*{email}">
+    <section class="profile-layout">
+        <article class="profile-card">
+            <div class="profile-avatar">
+                <img th:if="${user.profileImageUrl != null}"
+                     th:src="${user.profileImageUrl}"
+                     th:alt="${user.displayName + ' profile image'}">
+                <span th:if="${user.profileImageUrl == null}"
+                      th:text="${#strings.substring(user.displayName, 0, 1)}"></span>
             </div>
 
-            <button class="btn-primary" type="submit">Save Changes</button>
+            <div class="profile-info">
+                <h2 th:text="${user.displayName}"></h2>
+                <p th:text="${'@' + user.username}"></p>
+                <p th:text="${user.email}"></p>
+                <span class="role-badge" th:text="${user.role}"></span>
+            </div>
+        </article>
 
-        </form>
+        <section class="form-container profile-form-container">
+            <h2>Edit Profile</h2>
+            <p class="form-intro">These details are visible wherever your name appears in the marketplace.</p>
+
+            <div class="alert-error" role="alert" th:if="${formError != null}" th:text="${formError}"></div>
+
+            <form th:action="@{/profile}" th:object="${profileUpdateDTO}" th:method="put" novalidate>
+                <div class="profile-name-grid">
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input id="firstName" class="form-control" type="text" th:field="*{firstName}"
+                               autocomplete="given-name">
+                        <p class="error" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input id="lastName" class="form-control" type="text" th:field="*{lastName}"
+                               autocomplete="family-name">
+                        <p class="error" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input id="email" class="form-control" type="email" th:field="*{email}"
+                           autocomplete="email">
+                    <p class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
+                    <span class="form-hint">Use this email the next time you sign in.</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="profileImageUrl">Profile Image URL</label>
+                    <input id="profileImageUrl" class="form-control" type="url" th:field="*{profileImageUrl}"
+                           placeholder="https://example.com/profile.jpg">
+                    <p class="error" th:if="${#fields.hasErrors('profileImageUrl')}"
+                       th:errors="*{profileImageUrl}"></p>
+                    <span class="form-hint">Leave blank to display your initial instead.</span>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn btn-primary" type="submit">Save Changes</button>
+                    <a th:href="@{/home}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </section>
     </section>
 </main>
 
-<footer th:replace="~{fragments/footer :: footer}"></footer>
+<div th:replace="~{fragments/footer :: footer}"></div>
 
 </body>
 </html>

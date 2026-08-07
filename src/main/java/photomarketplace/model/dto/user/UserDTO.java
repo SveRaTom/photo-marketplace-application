@@ -16,6 +16,7 @@ public class UserDTO {
     private String displayName;
     private String username;
     private String email;
+    private String profileImageUrl;
     private UserRole role;
     private boolean isActive;
 }
