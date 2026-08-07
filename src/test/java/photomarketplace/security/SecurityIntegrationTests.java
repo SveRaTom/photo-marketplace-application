@@ -18,6 +18,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -156,6 +157,30 @@ class SecurityIntegrationTests {
                         .param("decision", "ACCEPT")
                         .param("proposedPrice", "450.00"))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void dashboardRedirectsUnauthenticatedUserToLogin() throws Exception {
+        this.mockMvc.perform(get("/dashboard"))
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("http://localhost/login"));
+    }
+
+    @Test
+    void clientCannotAccessPhotographerDashboard() throws Exception {
+        final MockHttpSession clientSession = login("client@example.com", "testClientPassword");
+
+        this.mockMvc.perform(get("/dashboard").session(clientSession))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void photographerCanAccessAndRenderDashboard() throws Exception {
+        final MockHttpSession photographerSession = login("photographer@example.com", "testPhotographerPassword");
+
+        this.mockMvc.perform(get("/dashboard").session(photographerSession))
+                .andExpect(status().isOk())
+                .andExpect(view().name("dashboard"));
     }
 
     @Test
