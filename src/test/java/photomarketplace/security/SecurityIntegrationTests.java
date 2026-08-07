@@ -15,6 +15,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -128,6 +129,32 @@ class SecurityIntegrationTests {
 
         this.mockMvc.perform(delete("/custom-offers/" + UUID.randomUUID())
                         .session(clientSession))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void photographerCustomOffersPageRedirectsUnauthenticatedUserToLogin() throws Exception {
+        this.mockMvc.perform(get("/photographer/custom-offers"))
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("http://localhost/login"));
+    }
+
+    @Test
+    void clientCannotAccessPhotographerCustomOffersPage() throws Exception {
+        final MockHttpSession clientSession = login("client@example.com", "testClientPassword");
+
+        this.mockMvc.perform(get("/photographer/custom-offers").session(clientSession))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void photographerCustomOfferDecisionWithoutCsrfTokenIsRejected() throws Exception {
+        final MockHttpSession photographerSession = login("photographer@example.com", "testPhotographerPassword");
+
+        this.mockMvc.perform(put("/photographer/custom-offers/" + UUID.randomUUID())
+                        .session(photographerSession)
+                        .param("decision", "ACCEPT")
+                        .param("proposedPrice", "450.00"))
                 .andExpect(status().isForbidden());
     }
 
