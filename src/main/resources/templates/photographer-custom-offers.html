@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Custom Offer Requests')}"></head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="container">
+    <section class="page-header">
+        <div>
+            <h1>Custom Offer Requests</h1>
+            <p>Review tailored photography requests and respond with a proposed price.</p>
+        </div>
+        <a th:href="@{/my-offers}" class="btn btn-primary">My Offers</a>
+    </section>
+
+    <div class="alert-success" role="status" th:if="${successMessage != null}" th:text="${successMessage}"></div>
+    <div class="alert-error" role="alert" th:if="${errorMessage != null}" th:text="${errorMessage}"></div>
+
+    <section class="bookings-grid" th:if="${!#lists.isEmpty(customOffers)}">
+        <article class="offer-card booking-card" th:each="customOffer : ${customOffers}">
+            <div class="offer-card-content">
+                <div class="review-top">
+                    <h2>Photography Request</h2>
+                    <span th:class="'status-badge status-' + ${#strings.toLowerCase(customOffer.status.name())}"
+                          th:text="${customOffer.status}"></span>
+                </div>
+
+                <div class="booking-meta">
+                    <span>Event date:
+                        <strong th:text="${#temporals.format(customOffer.eventDate, 'dd MMM yyyy')}"></strong>
+                    </span>
+                    <span>Location: <strong th:text="${customOffer.location}"></strong></span>
+                    <span th:if="${customOffer.proposedPrice != null}">Proposed price:
+                        <strong th:text="${customOffer.proposedPrice + ' €'}"></strong>
+                    </span>
+                    <span>Requested on:
+                        <strong th:text="${#temporals.format(customOffer.createdAt, 'dd MMM yyyy HH:mm')}"></strong>
+                    </span>
+                </div>
+
+                <p class="custom-offer-message" th:text="${customOffer.message}"></p>
+            </div>
+
+            <div class="custom-offer-decision-actions" th:if="${customOffer.status.name() == 'PENDING'}">
+                <form class="custom-offer-accept-form"
+                      th:action="@{/photographer/custom-offers/{customOfferId}(customOfferId=${customOffer.id})}"
+                      th:method="put">
+                    <input type="hidden" name="decision" value="ACCEPT">
+                    <label th:for="${'proposedPrice-' + customOffer.id}">Proposed price</label>
+                    <div class="custom-offer-price-action">
+                        <input class="form-control"
+                               th:id="${'proposedPrice-' + customOffer.id}"
+                               type="number"
+                               name="proposedPrice"
+                               min="0.01"
+                               step="0.01"
+                               max="99999999.99"
+                               placeholder="Price in EUR"
+                               required>
+                        <button type="submit" class="btn btn-success">Accept</button>
+                    </div>
+                </form>
+
+                <form th:action="@{/photographer/custom-offers/{customOfferId}(customOfferId=${customOffer.id})}"
+                      th:method="put">
+                    <input type="hidden" name="decision" value="DECLINE">
+                    <button type="submit" class="btn btn-danger"
+                            data-confirm-title="Decline this custom offer?"
+                            data-confirm-message="The client will see that this request was declined."
+                            data-confirm-confirm-label="Decline Request">
+                        Decline
+                    </button>
+                </form>
+            </div>
+
+            <div class="offer-actions">
+                <a th:href="@{/offers/{offerId}(offerId=${customOffer.offerId})}"
+                   class="btn btn-secondary">Original Offer</a>
+            </div>
+        </article>
+    </section>
+
+    <section class="empty-state"
+             th:if="${errorMessage == null and #lists.isEmpty(customOffers)}">
+        <h2>No Custom Offer Requests</h2>
+        <p>New tailored requests from clients will appear here.</p>
+        <a th:href="@{/my-offers}" class="btn btn-primary">View My Offers</a>
+    </section>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

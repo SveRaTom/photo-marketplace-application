@@ -682,6 +682,32 @@ textarea.form-control {
     overflow-wrap: anywhere;
 }
 
+.custom-offer-decision-actions {
+    display: flex;
+    align-items: flex-end;
+    gap: .75rem;
+    padding: 0 1.5rem;
+}
+
+.custom-offer-accept-form {
+    flex: 1;
+}
+
+.custom-offer-accept-form label {
+    display: block;
+    margin-bottom: .5rem;
+    font-weight: 600;
+}
+
+.custom-offer-price-action {
+    display: flex;
+    gap: .75rem;
+}
+
+.custom-offer-price-action .form-control {
+    min-width: 0;
+}
+
 .review-top {
     display: flex;
     justify-content: space-between;

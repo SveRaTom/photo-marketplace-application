@@ -50,6 +50,8 @@ public class SecurityConfiguration {
                                 "/photos/*/cover",
                                 "/bookings/*/approve",
                                 "/bookings/*/reject",
+                                "/photographer/custom-offers",
+                                "/photographer/custom-offers/*",
                                 "/dashboard")
                         .hasRole("PHOTOGRAPHER")
                         .requestMatchers(
