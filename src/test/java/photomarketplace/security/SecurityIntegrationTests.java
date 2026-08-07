@@ -247,6 +247,70 @@ class SecurityIntegrationTests {
     }
 
     @Test
+    void adminUsersPageRedirectsUnauthenticatedUserToLogin() throws Exception {
+        this.mockMvc.perform(get("/admin/users"))
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("http://localhost/login"));
+    }
+
+    @Test
+    void clientAndPhotographerCannotAccessAdminUsersPage() throws Exception {
+        final MockHttpSession clientSession = login("client@example.com", "testClientPassword");
+        final MockHttpSession photographerSession = login(
+                "photographer@example.com",
+                "testPhotographerPassword"
+        );
+
+        this.mockMvc.perform(get("/admin/users").session(clientSession))
+                .andExpect(status().isForbidden());
+
+        this.mockMvc.perform(get("/admin/users").session(photographerSession))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void administratorCanAccessAndRenderAdminUsersPage() throws Exception {
+        final MockHttpSession administratorSession = login(
+                "admin@example.com",
+                "testAdminPassword"
+        );
+
+        this.mockMvc.perform(get("/admin/users").session(administratorSession))
+                .andExpect(status().isOk())
+                .andExpect(view().name("admin-users"))
+                .andExpect(model().attributeExists("users", "roles", "administratorId"));
+    }
+
+    @Test
+    void administratorRoleUpdateWithoutCsrfTokenIsRejected() throws Exception {
+        final MockHttpSession administratorSession = login(
+                "admin@example.com",
+                "testAdminPassword"
+        );
+
+        this.mockMvc.perform(put("/admin/users/" + UUID.randomUUID() + "/role")
+                        .session(administratorSession)
+                        .param("role", "PHOTOGRAPHER"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void publicRegistrationCannotCreateAdministratorAccount() throws Exception {
+        this.mockMvc.perform(post("/register")
+                        .with(csrf())
+                        .param("username", "forged-administrator")
+                        .param("email", "forged-admin@example.com")
+                        .param("password", "forgedPassword")
+                        .param("role", "ADMIN"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("register"))
+                .andExpect(model().attribute(
+                        "formError",
+                        "Only client or photographer accounts can be created through registration."
+                ));
+    }
+
+    @Test
     void authenticatedUserCanLogout() throws Exception {
         final MockHttpSession clientSession = login("client@example.com", "testClientPassword");
 

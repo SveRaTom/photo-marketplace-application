@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import photomarketplace.exception.user.ProfileUpdateException;
+import photomarketplace.exception.user.UserRegistrationException;
 import photomarketplace.model.dto.user.ProfileUpdateDTO;
 import photomarketplace.model.dto.user.UserRegisterRequestDTO;
 import photomarketplace.model.entity.user.User;
@@ -80,8 +81,8 @@ class UserServiceTest {
         when(this.userRepository.findByEmailIgnoreCase("existing@example.com"))
                 .thenReturn(Optional.of(user(USER_ID, "existing@example.com")));
 
-        final RuntimeException exception = assertThrows(
-                RuntimeException.class,
+        final UserRegistrationException exception = assertThrows(
+                UserRegistrationException.class,
                 () -> this.userService.register(request)
         );
 
@@ -89,6 +90,26 @@ class UserServiceTest {
 
         verifyNoInteractions(this.passwordEncoder);
         verify(this.userRepository, never()).save(any(User.class));
+    }
+
+    @Test
+    void registerShouldRejectAdministratorRoleBeforeRepositoryAccess() {
+        final UserRegisterRequestDTO request = UserRegisterRequestDTO.builder()
+                .username("administrator")
+                .email("admin@example.com")
+                .password("plainPassword")
+                .role(UserRole.ADMIN)
+                .build();
+
+        final UserRegistrationException exception = assertThrows(
+                UserRegistrationException.class,
+                () -> this.userService.register(request)
+        );
+
+        assertEquals("Only client or photographer accounts can be created through registration.",
+                exception.getMessage());
+
+        verifyNoInteractions(this.passwordEncoder, this.userRepository);
     }
 
     @Test
