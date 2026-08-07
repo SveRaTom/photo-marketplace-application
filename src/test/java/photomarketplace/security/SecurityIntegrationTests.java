@@ -17,6 +17,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
@@ -181,6 +182,68 @@ class SecurityIntegrationTests {
         this.mockMvc.perform(get("/dashboard").session(photographerSession))
                 .andExpect(status().isOk())
                 .andExpect(view().name("dashboard"));
+    }
+
+    @Test
+    void authenticationShouldMatchEmailIgnoringCase() throws Exception {
+        final MockHttpSession clientSession = login("CLIENT@EXAMPLE.COM", "testClientPassword");
+
+        this.mockMvc.perform(get("/home").session(clientSession))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void profileRedirectsUnauthenticatedUserToLogin() throws Exception {
+        this.mockMvc.perform(get("/profile"))
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("http://localhost/login"));
+    }
+
+    @Test
+    void clientAndPhotographerCanAccessAndRenderOwnProfiles() throws Exception {
+        final MockHttpSession clientSession = login("client@example.com", "testClientPassword");
+        final MockHttpSession photographerSession = login("photographer@example.com", "testPhotographerPassword");
+
+        this.mockMvc.perform(get("/profile").session(clientSession))
+                .andExpect(status().isOk())
+                .andExpect(view().name("profile"));
+
+        this.mockMvc.perform(get("/profile").session(photographerSession))
+                .andExpect(status().isOk())
+                .andExpect(view().name("profile"));
+    }
+
+    @Test
+    void profileUpdateWithoutCsrfTokenIsRejected() throws Exception {
+        final MockHttpSession clientSession = login("client@example.com", "testClientPassword");
+
+        this.mockMvc.perform(put("/profile")
+                        .session(clientSession)
+                        .param("firstName", "Alex")
+                        .param("lastName", "Morgan")
+                        .param("email", "client@example.com"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void profileValidationErrorsAreRendered() throws Exception {
+        final MockHttpSession clientSession = login("client@example.com", "testClientPassword");
+
+        this.mockMvc.perform(put("/profile")
+                        .session(clientSession)
+                        .with(csrf())
+                        .param("firstName", "")
+                        .param("lastName", "M")
+                        .param("email", "invalid-email")
+                        .param("profileImageUrl", "ftp://example.com/avatar.jpg"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("profile"))
+                .andExpect(model().attributeHasFieldErrors(
+                        "profileUpdateDTO",
+                        "firstName",
+                        "lastName",
+                        "email",
+                        "profileImageUrl"));
     }
 
     @Test
