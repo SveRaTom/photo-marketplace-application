@@ -74,6 +74,7 @@ class UserServiceTest {
         final UserRegisterRequestDTO request = UserRegisterRequestDTO.builder()
                 .email("Existing@Example.com")
                 .password("plainPassword")
+                .role(UserRole.CLIENT)
                 .build();
 
         when(this.userRepository.findByEmailIgnoreCase("existing@example.com"))

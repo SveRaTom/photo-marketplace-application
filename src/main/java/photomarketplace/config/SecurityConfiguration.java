@@ -37,6 +37,8 @@ public class SecurityConfiguration {
                                 "/reviews/*",
                                 "/photographers/*")
                         .permitAll()
+                        .requestMatchers("/admin/**")
+                        .hasRole("ADMIN")
                         .requestMatchers(
                                 "/my-offers",
                                 "/offers/create",

@@ -7,11 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import photomarketplace.exception.user.ProfileUpdateException;
+import photomarketplace.exception.user.UserRegistrationException;
 import photomarketplace.mapper.user.UserMapper;
 import photomarketplace.model.dto.user.ProfileUpdateDTO;
 import photomarketplace.model.dto.user.UserDTO;
 import photomarketplace.model.dto.user.UserRegisterRequestDTO;
 import photomarketplace.model.entity.user.User;
+import photomarketplace.model.entity.user.UserRole;
 import photomarketplace.repository.user.UserRepository;
 
 import java.util.List;
@@ -34,11 +36,26 @@ public class UserService {
     }
 
     public void register(final UserRegisterRequestDTO userRegisterRequest) {
+        if (userRegisterRequest.getRole() != UserRole.CLIENT
+                && userRegisterRequest.getRole() != UserRole.PHOTOGRAPHER) {
+
+            throw new UserRegistrationException(
+                    "Only client or photographer accounts can be created through registration.");
+        }
+
+        createUser(userRegisterRequest);
+    }
+
+    void registerInitialUser(final UserRegisterRequestDTO userRegisterRequest) {
+        createUser(userRegisterRequest);
+    }
+
+    private void createUser(final UserRegisterRequestDTO userRegisterRequest) {
         final String normalizedEmail = normalizeEmail(userRegisterRequest.getEmail());
 
         this.userRepository.findByEmailIgnoreCase(normalizedEmail)
                 .ifPresent(user -> {
-                    throw new RuntimeException("User with this email already exists!");
+                    throw new UserRegistrationException("User with this email already exists!");
                 });
 
         final String encodedPassword = this.passwordEncoder.encode(userRegisterRequest.getPassword());

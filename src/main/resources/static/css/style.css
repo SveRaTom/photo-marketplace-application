@@ -736,6 +736,60 @@ textarea.form-control {
     gap: 1rem;
 }
 
+.admin-users-widget {
+    margin-bottom: 4rem;
+}
+
+.admin-users-table td {
+    vertical-align: middle;
+}
+
+.admin-username {
+    display: block;
+    margin-top: .25rem;
+    color: #64748b;
+    font-size: .9rem;
+}
+
+.account-status,
+.current-account-label {
+    display: inline-block;
+    padding: .35rem .7rem;
+    border-radius: 999px;
+    font-size: .8rem;
+    font-weight: 600;
+}
+
+.account-active {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.account-inactive {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.current-account-label {
+    background: #eef2ff;
+    color: #3730a3;
+}
+
+.role-management-form {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    min-width: 310px;
+}
+
+.role-management-form .form-control {
+    min-width: 150px;
+}
+
+.role-management-form .btn {
+    white-space: nowrap;
+}
+
 .reviews-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(340px, 520px));

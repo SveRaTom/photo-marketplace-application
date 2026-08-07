@@ -1,17 +1,19 @@
 package photomarketplace.service.user;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
 import photomarketplace.model.dto.user.UserDTO;
 import photomarketplace.model.dto.user.UserRegisterRequestDTO;
 import photomarketplace.model.entity.user.UserRole;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class UserInit implements CommandLineRunner {
 
     @Value("${app.photographer.password}")
@@ -20,40 +22,61 @@ public class UserInit implements CommandLineRunner {
     @Value("${app.client.password}")
     private String clientPassword;
 
-    private final UserService userService;
+    @Value("${app.admin.password}")
+    private String administratorPassword;
 
-    public UserInit(final UserService userService) {
-        this.userService = userService;
-    }
+    private final UserService userService;
 
     @Override
     public void run(final String... args) {
         final List<UserDTO> users = this.userService.getAllUsers();
 
-        if (!users.isEmpty()) {
+        createIfMissing(
+                users,
+                "photographer",
+                "photographer@example.com",
+                this.photographerPassword,
+                UserRole.PHOTOGRAPHER
+        );
+        createIfMissing(
+                users,
+                "client",
+                "client@example.com",
+                this.clientPassword,
+                UserRole.CLIENT
+        );
+        createIfMissing(
+                users,
+                "administrator",
+                "admin@example.com",
+                this.administratorPassword,
+                UserRole.ADMIN
+        );
+    }
+
+    private void createIfMissing(
+            final List<UserDTO> users,
+            final String username,
+            final String email,
+            final String password,
+            final UserRole role) {
+
+        final boolean accountExists = users.stream()
+                .anyMatch(user -> email.equalsIgnoreCase(user.getEmail()));
+
+        if (accountExists) {
             return;
         }
 
-        final UserRegisterRequestDTO photographerRegisterRequest = UserRegisterRequestDTO.builder()
-                .username("photographer")
-                .email("photographer@example.com")
-                .password(this.photographerPassword)
-                .role(UserRole.PHOTOGRAPHER)
+        final UserRegisterRequestDTO registration = UserRegisterRequestDTO.builder()
+                .username(username)
+                .email(email)
+                .password(password)
+                .role(role)
                 .build();
 
-        this.userService.register(photographerRegisterRequest);
+        this.userService.registerInitialUser(registration);
 
-        log.info("Photographer account created with username '%s'.".formatted(photographerRegisterRequest.getUsername()));
-
-        final UserRegisterRequestDTO clientRegisterRequest = UserRegisterRequestDTO.builder()
-                .username("client")
-                .email("client@example.com")
-                .password(this.clientPassword)
-                .role(UserRole.CLIENT)
-                .build();
-
-        this.userService.register(clientRegisterRequest);
-
-        log.info("Client account created with username '%s'.".formatted(clientRegisterRequest.getUsername()));
+        log.info("{} account created with username '{}'.", role, username);
     }
 }

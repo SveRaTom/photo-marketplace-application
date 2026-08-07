@@ -13,6 +13,8 @@
 
         <h2>Create Account</h2>
 
+        <div class="alert-error" role="alert" th:if="${formError != null}" th:text="${formError}"></div>
+
         <form th:action="@{/register}" th:object="${userRegisterRequest}" th:method="post" novalidate>
 
             <div class="form-group">
@@ -37,7 +39,7 @@
                 <label for="role">Role</label>
                 <div class="select-wrapper">
                     <select id="role" class="form-control select-pretty" th:field="*{role}">
-                        <option th:each="role : ${T(photomarketplace.model.entity.user.UserRole).values()}"
+                        <option th:each="role : ${registrationRoles}"
                                 th:value="${role}"
                                 th:text="${role}">
                         </option>

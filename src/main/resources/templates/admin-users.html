@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/header :: head('User Management')}">
+    <title>User Management</title>
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="container">
+    <section class="page-header">
+        <div>
+            <h1>User Management</h1>
+            <p>Review marketplace accounts and assign the appropriate access role.</p>
+        </div>
+    </section>
+
+    <div class="alert-success" role="status" th:if="${successMessage != null}" th:text="${successMessage}"></div>
+    <div class="alert-error" role="alert" th:if="${errorMessage != null}" th:text="${errorMessage}"></div>
+
+    <section class="dashboard-widget admin-users-widget">
+        <div class="dashboard-table-wrapper">
+            <table class="dashboard-table admin-users-table">
+                <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Role</th>
+                    <th>Management</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="user : ${users}">
+                    <td>
+                        <strong th:text="${user.displayName}"></strong>
+                        <span class="admin-username" th:text="${'@' + user.username}"></span>
+                    </td>
+                    <td th:text="${user.email}"></td>
+                    <td>
+                        <span th:class="${user.active ? 'account-status account-active' : 'account-status account-inactive'}"
+                              th:text="${user.active ? 'ACTIVE' : 'INACTIVE'}"></span>
+                    </td>
+                    <td><span class="role-badge" th:text="${user.role}"></span></td>
+                    <td>
+                        <span class="current-account-label" th:if="${user.id == administratorId}">Current account</span>
+
+                        <form class="role-management-form"
+                              th:if="${user.id != administratorId}"
+                              th:action="@{/admin/users/{userId}/role(userId=${user.id})}"
+                              th:method="put">
+                            <select class="form-control select-pretty" name="role" aria-label="Select user role">
+                                <option th:each="role : ${roles}"
+                                        th:value="${role}"
+                                        th:text="${role}"
+                                        th:selected="${role == user.role}"></option>
+                            </select>
+                            <button class="btn btn-primary" type="submit"
+                                    data-confirm-title="Change this user's role?"
+                                    data-confirm-message="The new access level will take effect when the user signs in again."
+                                    data-confirm-confirm-label="Update Role">
+                                Update Role
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

@@ -10,16 +10,22 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import photomarketplace.exception.user.UserRegistrationException;
 import photomarketplace.model.dto.user.UserDTO;
 import photomarketplace.model.dto.user.UserLoginRequestDTO;
 import photomarketplace.model.dto.user.UserRegisterRequestDTO;
+import photomarketplace.model.entity.user.UserRole;
 import photomarketplace.service.user.UserService;
 
+import java.util.List;
 import java.util.UUID;
 
 @Controller
 @RequestMapping("/")
 public class IndexController {
+
+    private static final List<UserRole> PUBLIC_REGISTRATION_ROLES =
+            List.of(UserRole.CLIENT, UserRole.PHOTOGRAPHER);
 
     private final UserService userService;
 
@@ -52,6 +58,7 @@ public class IndexController {
 
         final ModelAndView modelAndView = new ModelAndView("register");
         modelAndView.addObject("userRegisterRequest", userRegisterRequest);
+        modelAndView.addObject("registrationRoles", PUBLIC_REGISTRATION_ROLES);
 
         return modelAndView;
     }
@@ -63,12 +70,22 @@ public class IndexController {
         if (bindingResult.hasErrors()) {
             final ModelAndView modelAndView = new ModelAndView("register");
             modelAndView.addObject("userRegisterRequest", userRegisterRequest);
+            modelAndView.addObject("registrationRoles", PUBLIC_REGISTRATION_ROLES);
             modelAndView.addObject("org.springframework.validation.BindingResult.userRegisterRequest", bindingResult);
 
             return modelAndView;
         }
 
-        this.userService.register(userRegisterRequest);
+        try {
+            this.userService.register(userRegisterRequest);
+        } catch (UserRegistrationException exception) {
+            final ModelAndView modelAndView = new ModelAndView("register");
+            modelAndView.addObject("userRegisterRequest", userRegisterRequest);
+            modelAndView.addObject("registrationRoles", PUBLIC_REGISTRATION_ROLES);
+            modelAndView.addObject("formError", exception.getMessage());
+
+            return modelAndView;
+        }
 
         return new ModelAndView("redirect:/login");
     }
@@ -80,7 +97,7 @@ public class IndexController {
         if (userId == null) {
             return new ModelAndView("redirect:/login");
         }
-        
+
         final UserDTO user = this.userService.getUserById(userId);
         final ModelAndView modelAndView = new ModelAndView("home");
         modelAndView.addObject("user", user);

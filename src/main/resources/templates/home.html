@@ -21,6 +21,12 @@
             <p>Track your bookings, manage offers, and connect with clients who love your work.</p>
             <a th:href="@{/bookings}" class="btn">Check Bookings</a>
         </th:block>
+
+        <th:block th:if="${user.role.name() == 'ADMIN'}">
+            <h1>Manage LensMarket</h1>
+            <p>Review user accounts and maintain the correct access roles across the marketplace.</p>
+            <a th:href="@{/admin/users}" class="btn">Manage Users</a>
+        </th:block>
     </div>
 </section>
 
