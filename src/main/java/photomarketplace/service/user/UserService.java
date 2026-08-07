@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import photomarketplace.exception.ResourceNotFoundException;
 import photomarketplace.exception.user.ProfileUpdateException;
 import photomarketplace.exception.user.UserRegistrationException;
 import photomarketplace.mapper.user.UserMapper;
@@ -105,7 +106,8 @@ public class UserService {
 
     public User getUser(final UUID id) {
         return this.userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User with id [%s] does not exist.".formatted(id)));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "User with id [%s] does not exist.".formatted(id)));
     }
 
     public List<UserDTO> getAllUsers() {

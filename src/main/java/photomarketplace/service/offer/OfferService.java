@@ -3,6 +3,8 @@ package photomarketplace.service.offer;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import photomarketplace.exception.ForbiddenOperationException;
+import photomarketplace.exception.ResourceNotFoundException;
 import photomarketplace.mapper.user.UserMapper;
 import photomarketplace.model.dto.offer.OfferDTO;
 import photomarketplace.model.dto.offer.OfferRequestDTO;
@@ -145,7 +147,7 @@ public class OfferService {
         final Offer offer = getOffer(offerId);
 
         if (!offer.getPhotographer().getId().equals(photographerId)) {
-            throw new RuntimeException("You do not have permission to manage this offer.");
+            throw new ForbiddenOperationException("You do not have permission to manage this offer.");
         }
 
         return offer;
@@ -153,7 +155,8 @@ public class OfferService {
 
     private Offer getOffer(final UUID id) {
         return this.offerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Offer with id [%s] does not exist.".formatted(id)));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Offer with id [%s] does not exist.".formatted(id)));
     }
 
     private OfferDTO toOfferDTO(final Offer offer) {

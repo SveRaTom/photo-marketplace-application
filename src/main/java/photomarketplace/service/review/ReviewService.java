@@ -3,6 +3,9 @@ package photomarketplace.service.review;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import photomarketplace.exception.ForbiddenOperationException;
+import photomarketplace.exception.InvalidOperationException;
+import photomarketplace.exception.ResourceNotFoundException;
 import photomarketplace.mapper.user.UserMapper;
 import photomarketplace.model.dto.booking.BookingDTO;
 import photomarketplace.model.dto.offer.OfferDTO;
@@ -124,7 +127,7 @@ public class ReviewService {
         final Review review = getReview(reviewId);
 
         if (!isAuthor(review, currentUserId)) {
-            throw new RuntimeException("Only the review author can manage this review.");
+            throw new ForbiddenOperationException("Only the review author can manage this review.");
         }
 
         return review;
@@ -134,15 +137,15 @@ public class ReviewService {
         final Booking booking = getBooking(bookingId);
 
         if (!booking.getClient().getId().equals(currentUserId)) {
-            throw new RuntimeException("Only the booking client can review this offer.");
+            throw new ForbiddenOperationException("Only the booking client can review this offer.");
         }
 
         if (!isReviewable(booking)) {
-            throw new RuntimeException("Only approved or completed bookings can be reviewed.");
+            throw new InvalidOperationException("Only approved or completed bookings can be reviewed.");
         }
 
         if (this.reviewRepository.existsByBookingId(bookingId)) {
-            throw new RuntimeException("This booking already has a review.");
+            throw new InvalidOperationException("This booking already has a review.");
         }
 
         return booking;
@@ -150,12 +153,14 @@ public class ReviewService {
 
     private Review getReview(final UUID reviewId) {
         return this.reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new RuntimeException("Review with id [%s] does not exist.".formatted(reviewId)));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Review with id [%s] does not exist.".formatted(reviewId)));
     }
 
     private Booking getBooking(final UUID bookingId) {
         return this.bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new RuntimeException("Booking with id [%s] does not exist.".formatted(bookingId)));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Booking with id [%s] does not exist.".formatted(bookingId)));
     }
 
     private ReviewDTO toReviewDTO(final Review review, final UUID currentUserId) {

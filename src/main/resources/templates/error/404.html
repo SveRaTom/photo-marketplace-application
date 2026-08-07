@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="~{fragments/header :: head('Page Not Found')}"></head>
+<head th:replace="~{fragments/header :: head('Page Not Found')}">
+    <title>Page Not Found</title>
+</head>
 
 <body>
+
+<div th:replace="~{fragments/header :: header}"></div>
 
 <main class="error-page">
     <div class="error-container">
@@ -14,7 +18,7 @@
         </p>
 
         <div class="error-actions">
-            <a th:href="@{/home}" class="btn btn-primary">Return Home</a>
+            <a th:href="@{/}" class="btn btn-primary">Return to Start</a>
             <a th:href="@{/offers}" class="btn btn-secondary">Browse Offers</a>
         </div>
     </div>

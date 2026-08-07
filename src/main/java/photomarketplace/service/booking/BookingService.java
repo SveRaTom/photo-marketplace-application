@@ -3,6 +3,9 @@ package photomarketplace.service.booking;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import photomarketplace.exception.ForbiddenOperationException;
+import photomarketplace.exception.InvalidOperationException;
+import photomarketplace.exception.ResourceNotFoundException;
 import photomarketplace.mapper.user.UserMapper;
 import photomarketplace.model.dto.booking.BookingDTO;
 import photomarketplace.model.dto.booking.BookingRequestDTO;
@@ -82,11 +85,11 @@ public class BookingService {
         final Offer offer = getOffer(offerId);
 
         if (!offer.isAvailable()) {
-            throw new RuntimeException("This offer is not available for booking.");
+            throw new InvalidOperationException("This offer is not available for booking.");
         }
 
         if (offer.getPhotographer().getId().equals(clientId)) {
-            throw new RuntimeException("You cannot book your own photography offer.");
+            throw new InvalidOperationException("You cannot book your own photography offer.");
         }
 
         final User client = this.userService.getUser(clientId);
@@ -141,7 +144,7 @@ public class BookingService {
         final Booking booking = getBooking(bookingId);
 
         if (!isClient(booking, currentUserId) && !isOfferPhotographer(booking, currentUserId)) {
-            throw new RuntimeException("You do not have permission to view this booking.");
+            throw new ForbiddenOperationException("You do not have permission to view this booking.");
         }
 
         return booking;
@@ -151,11 +154,11 @@ public class BookingService {
         final Booking booking = getVisibleBooking(bookingId, currentUserId);
 
         if (!isClient(booking, currentUserId)) {
-            throw new RuntimeException("Only the client who created this booking can manage it.");
+            throw new ForbiddenOperationException("Only the client who created this booking can manage it.");
         }
 
         if (booking.getStatus() != BookingStatus.PENDING) {
-            throw new RuntimeException("Only pending bookings can be changed.");
+            throw new InvalidOperationException("Only pending bookings can be changed.");
         }
 
         return booking;
@@ -165,11 +168,12 @@ public class BookingService {
         final Booking booking = getVisibleBooking(bookingId, currentUserId);
 
         if (!isOfferPhotographer(booking, currentUserId)) {
-            throw new RuntimeException("Only the offer photographer can manage this booking request.");
+            throw new ForbiddenOperationException(
+                    "Only the offer photographer can manage this booking request.");
         }
 
         if (booking.getStatus() != BookingStatus.PENDING) {
-            throw new RuntimeException("Only pending bookings can be approved or rejected.");
+            throw new InvalidOperationException("Only pending bookings can be approved or rejected.");
         }
 
         return booking;
@@ -179,11 +183,11 @@ public class BookingService {
         final Booking booking = getVisibleBooking(bookingId, currentUserId);
 
         if (!isClient(booking, currentUserId)) {
-            throw new RuntimeException("Only the client who created this booking can cancel it.");
+            throw new ForbiddenOperationException("Only the client who created this booking can cancel it.");
         }
 
         if (!isCancellable(booking)) {
-            throw new RuntimeException("Only pending or approved bookings can be cancelled.");
+            throw new InvalidOperationException("Only pending or approved bookings can be cancelled.");
         }
 
         return booking;
@@ -191,12 +195,14 @@ public class BookingService {
 
     private Booking getBooking(final UUID bookingId) {
         return this.bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new RuntimeException("Booking with id [%s] does not exist.".formatted(bookingId)));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Booking with id [%s] does not exist.".formatted(bookingId)));
     }
 
     private Offer getOffer(final UUID offerId) {
         return this.offerRepository.findById(offerId)
-                .orElseThrow(() -> new RuntimeException("Offer with id [%s] does not exist.".formatted(offerId)));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Offer with id [%s] does not exist.".formatted(offerId)));
     }
 
     private BookingDTO toBookingDTO(final Booking booking, final UUID currentUserId) {

@@ -3,6 +3,8 @@ package photomarketplace.service.photo;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import photomarketplace.exception.ForbiddenOperationException;
+import photomarketplace.exception.ResourceNotFoundException;
 import photomarketplace.mapper.user.UserMapper;
 import photomarketplace.model.dto.offer.OfferDTO;
 import photomarketplace.model.dto.photo.PhotoDTO;
@@ -130,7 +132,7 @@ public class PhotoService {
         final Photo photo = getPhoto(photoId);
 
         if (!photo.getOffer().getPhotographer().getId().equals(photographerId)) {
-            throw new RuntimeException("You do not have permission to manage this photo.");
+            throw new ForbiddenOperationException("You do not have permission to manage this photo.");
         }
 
         return photo;
@@ -140,7 +142,8 @@ public class PhotoService {
         final Offer offer = getOffer(offerId);
 
         if (!offer.getPhotographer().getId().equals(photographerId)) {
-            throw new RuntimeException("You do not have permission to manage photos for this offer.");
+            throw new ForbiddenOperationException(
+                    "You do not have permission to manage photos for this offer.");
         }
 
         return offer;
@@ -148,12 +151,14 @@ public class PhotoService {
 
     private Photo getPhoto(final UUID photoId) {
         return this.photoRepository.findById(photoId)
-                .orElseThrow(() -> new RuntimeException("Photo with id '%s' does not exist.".formatted(photoId)));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Photo with id '%s' does not exist.".formatted(photoId)));
     }
 
     private Offer getOffer(final UUID offerId) {
         return this.offerRepository.findById(offerId)
-                .orElseThrow(() -> new RuntimeException("Offer with id '%s' does not exist.".formatted(offerId)));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Offer with id '%s' does not exist.".formatted(offerId)));
     }
 
     private PhotoDTO toPhotoDTO(final Photo photo, final UUID currentUserId) {

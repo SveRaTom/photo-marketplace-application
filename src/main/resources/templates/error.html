@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/header :: head('Request Error')}">
+    <title>Request Error</title>
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="error-page">
+    <div class="error-container">
+        <p class="error-code" th:text="${status != null ? status : 500}">500</p>
+        <h1 th:text="${errorTitle != null ? errorTitle : (error != null ? error : 'Something went wrong')}">
+            Something went wrong
+        </h1>
+        <p class="error-message"
+           th:text="${errorMessage != null ? errorMessage : 'We could not complete your request. Please try again.'}">
+            We could not complete your request. Please try again.
+        </p>
+
+        <div class="error-actions">
+            <a th:href="@{/}" class="btn btn-primary">Return to Start</a>
+            <a th:href="@{/offers}" class="btn btn-secondary">Browse Offers</a>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>
