@@ -1,12 +1,13 @@
 package photomarketplace.mapper.user;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import photomarketplace.model.dto.user.UserDTO;
 import photomarketplace.model.dto.user.UserRegisterRequestDTO;
 import photomarketplace.model.entity.user.User;
-import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
-public class UserMapper {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class UserMapper {
 
     public static User toUserEntity(final UserRegisterRequestDTO userRegisterRequest) {
         if (userRegisterRequest == null) {
