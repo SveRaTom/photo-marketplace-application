@@ -68,6 +68,11 @@ public class UserInit implements CommandLineRunner {
             return;
         }
 
+        if (password == null || password.isBlank()) {
+            log.warn("{} account was not seeded because its password is not configured.", role);
+            return;
+        }
+
         final UserRegisterRequestDTO registration = UserRegisterRequestDTO.builder()
                 .username(username)
                 .email(email)
