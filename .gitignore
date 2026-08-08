@@ -6,3 +6,6 @@
 
 # Maven
 target/
+
+# Local configuration
+src/main/resources/application-dev.properties
