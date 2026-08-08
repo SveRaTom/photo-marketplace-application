@@ -1,10 +1,13 @@
 package photomarketplace.service.user;
 
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import photomarketplace.config.cache.EvictOfferCaches;
 import photomarketplace.exception.user.UserRoleManagementException;
 import photomarketplace.mapper.user.UserMapper;
@@ -21,6 +24,7 @@ import java.util.UUID;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Validated
 public class AdminUserService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AdminUserService.class);
@@ -40,7 +44,7 @@ public class AdminUserService {
     public void updateUserRole(
             final UUID administratorId,
             final UUID targetUserId,
-            final UserRoleUpdateDTO roleUpdate) {
+            @Valid @NotNull final UserRoleUpdateDTO roleUpdate) {
 
         requireRoleUpdate(roleUpdate);
         requireAdministrator(administratorId);

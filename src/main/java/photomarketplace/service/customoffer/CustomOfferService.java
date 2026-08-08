@@ -5,9 +5,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import feign.RetryableException;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import photomarketplace.client.customoffer.CustomOfferClient;
 import photomarketplace.exception.customoffer.CustomOfferIntegrationException;
 import photomarketplace.exception.customoffer.CustomOfferNotFoundException;
@@ -30,6 +33,7 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 @Service
+@Validated
 public class CustomOfferService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomOfferService.class);
@@ -56,7 +60,7 @@ public class CustomOfferService {
 
     public CustomOfferResponseDTO createCustomOffer(final UUID offerId,
                                                     final UUID clientId,
-                                                    final CustomOfferRequestDTO request) {
+                                                    @Valid @NotNull final CustomOfferRequestDTO request) {
 
         requireUserRole(clientId, UserRole.CLIENT);
         requireRequest(request);
@@ -96,7 +100,7 @@ public class CustomOfferService {
     public CustomOfferResponseDTO decideCustomOffer(
             final UUID customOfferId,
             final UUID photographerId,
-            final CustomOfferDecisionRequestDTO request) {
+            @Valid @NotNull final CustomOfferDecisionRequestDTO request) {
 
         requireUserRole(photographerId, UserRole.PHOTOGRAPHER);
         requireDecision(request);

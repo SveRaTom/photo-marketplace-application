@@ -1,11 +1,14 @@
 package photomarketplace.service.user;
 
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import photomarketplace.config.cache.EvictOfferCaches;
 import photomarketplace.exception.ResourceNotFoundException;
 import photomarketplace.exception.user.ProfileUpdateException;
@@ -24,6 +27,7 @@ import java.util.UUID;
 
 @Service
 @Transactional
+@Validated
 public class UserService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
@@ -37,7 +41,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public void register(final UserRegisterRequestDTO userRegisterRequest) {
+    public void register(@Valid @NotNull final UserRegisterRequestDTO userRegisterRequest) {
         if (userRegisterRequest.getRole() != UserRole.CLIENT
                 && userRegisterRequest.getRole() != UserRole.PHOTOGRAPHER) {
 
@@ -85,7 +89,7 @@ public class UserService {
     }
 
     @EvictOfferCaches
-    public void updateProfile(final UUID userId, final ProfileUpdateDTO profileUpdate) {
+    public void updateProfile(final UUID userId, @Valid @NotNull final ProfileUpdateDTO profileUpdate) {
         requireProfileDetails(profileUpdate);
 
         final User user = getUser(userId);
