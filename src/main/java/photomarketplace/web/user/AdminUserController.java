@@ -15,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import photomarketplace.exception.user.UserRoleManagementException;
 import photomarketplace.model.dto.user.UserRoleUpdateDTO;
 import photomarketplace.model.entity.user.UserRole;
+import photomarketplace.security.MarketplaceSession;
 import photomarketplace.service.user.AdminUserService;
 
 import java.util.List;
@@ -73,6 +74,6 @@ public class AdminUserController {
     }
 
     private static UUID getUserId(final HttpSession httpSession) {
-        return (UUID) httpSession.getAttribute("user_id");
+        return (UUID) httpSession.getAttribute(MarketplaceSession.USER_ID);
     }
 }

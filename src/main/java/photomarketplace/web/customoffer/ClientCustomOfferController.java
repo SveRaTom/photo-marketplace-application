@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import photomarketplace.exception.customoffer.CustomOfferException;
+import photomarketplace.security.MarketplaceSession;
 import photomarketplace.service.customoffer.CustomOfferService;
 
 import java.util.List;
@@ -53,6 +54,6 @@ public class ClientCustomOfferController {
     }
 
     private static UUID getUserId(final HttpSession httpSession) {
-        return (UUID) httpSession.getAttribute("user_id");
+        return (UUID) httpSession.getAttribute(MarketplaceSession.USER_ID);
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import photomarketplace.exception.customoffer.CustomOfferException;
 import photomarketplace.model.dto.customoffer.CustomOfferRequestDTO;
+import photomarketplace.security.MarketplaceSession;
 import photomarketplace.service.customoffer.CustomOfferService;
 import photomarketplace.service.offer.OfferService;
 
@@ -75,6 +76,6 @@ public class CustomOfferController {
     }
 
     private static UUID getUserId(final HttpSession httpSession) {
-        return (UUID) httpSession.getAttribute("user_id");
+        return (UUID) httpSession.getAttribute(MarketplaceSession.USER_ID);
     }
 }

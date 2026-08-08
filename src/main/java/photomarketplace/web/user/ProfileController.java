@@ -13,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import photomarketplace.exception.user.ProfileUpdateException;
 import photomarketplace.model.dto.user.ProfileUpdateDTO;
+import photomarketplace.security.MarketplaceSession;
 import photomarketplace.service.user.UserService;
 
 import java.util.UUID;
@@ -70,6 +71,6 @@ public class ProfileController {
     }
 
     private static UUID getUserId(final HttpSession httpSession) {
-        return (UUID) httpSession.getAttribute("user_id");
+        return (UUID) httpSession.getAttribute(MarketplaceSession.USER_ID);
     }
 }

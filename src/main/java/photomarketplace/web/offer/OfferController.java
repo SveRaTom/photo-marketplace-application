@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import photomarketplace.model.dto.offer.OfferRequestDTO;
+import photomarketplace.security.MarketplaceSession;
 import photomarketplace.service.offer.OfferService;
 
 import java.util.UUID;
@@ -120,6 +121,6 @@ public class OfferController {
     }
 
     private static UUID getUserId(final HttpSession httpSession) {
-        return (UUID) httpSession.getAttribute("user_id");
+        return (UUID) httpSession.getAttribute(MarketplaceSession.USER_ID);
     }
 }

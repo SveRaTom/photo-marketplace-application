@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import photomarketplace.model.dto.review.ReviewRequestDTO;
 import photomarketplace.model.dto.review.ReviewDTO;
+import photomarketplace.security.MarketplaceSession;
 import photomarketplace.service.offer.OfferService;
 import photomarketplace.service.review.ReviewService;
 
@@ -133,11 +134,11 @@ public class ReviewController {
     }
 
     private static UUID getUserId(final HttpSession httpSession) {
-        return (UUID) httpSession.getAttribute("user_id");
+        return (UUID) httpSession.getAttribute(MarketplaceSession.USER_ID);
     }
 
     private static UUID getOptionalUserId(final HttpSession httpSession) {
-        return httpSession == null ? null : (UUID) httpSession.getAttribute("user_id");
+        return httpSession == null ? null : (UUID) httpSession.getAttribute(MarketplaceSession.USER_ID);
     }
 
     private static String resolveBackUrl(final String from, final ReviewDTO review) {

@@ -15,6 +15,7 @@ import photomarketplace.model.dto.user.UserDTO;
 import photomarketplace.model.dto.user.UserLoginRequestDTO;
 import photomarketplace.model.dto.user.UserRegisterRequestDTO;
 import photomarketplace.model.entity.user.UserRole;
+import photomarketplace.security.MarketplaceSession;
 import photomarketplace.service.user.UserService;
 
 import java.util.List;
@@ -92,7 +93,7 @@ public class IndexController {
 
     @GetMapping("/home")
     public ModelAndView getHomePage(final HttpSession httpSession) {
-        final UUID userId = (UUID) httpSession.getAttribute("user_id");
+        final UUID userId = (UUID) httpSession.getAttribute(MarketplaceSession.USER_ID);
 
         if (userId == null) {
             return new ModelAndView("redirect:/login");

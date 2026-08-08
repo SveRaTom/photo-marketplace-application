@@ -23,8 +23,7 @@ public class MarketplaceAuthenticationSuccessHandler extends SimpleUrlAuthentica
                                         final Authentication authentication) throws IOException, ServletException {
 
         final MarketplaceUserDetails userDetails = (MarketplaceUserDetails) authentication.getPrincipal();
-        request.getSession().setAttribute("user_id", userDetails.getId());
-        request.getSession().setAttribute("user_role", userDetails.getRole().name());
+        request.getSession().setAttribute(MarketplaceSession.USER_ID, userDetails.getId());
 
         super.onAuthenticationSuccess(request, response, authentication);
     }
