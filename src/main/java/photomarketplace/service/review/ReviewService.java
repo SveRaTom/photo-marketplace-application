@@ -172,14 +172,12 @@ public class ReviewService {
 
     private Review getReview(final UUID reviewId) {
         return this.reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Review with id '%s' does not exist.".formatted(reviewId)));
+                .orElseThrow(() -> new ResourceNotFoundException("Review", reviewId));
     }
 
     private Booking getBooking(final UUID bookingId) {
         return this.bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Booking with id '%s' does not exist.".formatted(bookingId)));
+                .orElseThrow(() -> new ResourceNotFoundException("Booking", bookingId));
     }
 
     private ReviewDTO toReviewDTO(final Review review, final UUID currentUserId) {

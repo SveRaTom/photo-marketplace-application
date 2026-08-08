@@ -199,8 +199,7 @@ public class OfferService {
 
     private Offer getOffer(final UUID id) {
         return this.offerRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Offer with id [%s] does not exist.".formatted(id)));
+                .orElseThrow(() -> new ResourceNotFoundException("Offer", id));
     }
 
     private OfferDTO toOfferDTO(final Offer offer) {

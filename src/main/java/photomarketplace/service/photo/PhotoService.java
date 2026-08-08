@@ -175,14 +175,12 @@ public class PhotoService {
 
     private Photo getPhoto(final UUID photoId) {
         return this.photoRepository.findById(photoId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Photo with id '%s' does not exist.".formatted(photoId)));
+                .orElseThrow(() -> new ResourceNotFoundException("Photo", photoId));
     }
 
     private Offer getOffer(final UUID offerId) {
         return this.offerRepository.findById(offerId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Offer with id '%s' does not exist.".formatted(offerId)));
+                .orElseThrow(() -> new ResourceNotFoundException("Offer", offerId));
     }
 
     private PhotoDTO toPhotoDTO(final Photo photo, final UUID currentUserId) {

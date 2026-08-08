@@ -108,8 +108,7 @@ public class UserService {
 
     public User getUser(final UUID id) {
         return this.userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "User with id [%s] does not exist.".formatted(id)));
+                .orElseThrow(() -> new ResourceNotFoundException("User", id));
     }
 
     public List<UserDTO> getAllUsers() {

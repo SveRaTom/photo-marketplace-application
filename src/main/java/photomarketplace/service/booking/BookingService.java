@@ -234,14 +234,12 @@ public class BookingService {
 
     private Booking getBooking(final UUID bookingId) {
         return this.bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Booking with id '%s' does not exist.".formatted(bookingId)));
+                .orElseThrow(() -> new ResourceNotFoundException("Booking", bookingId));
     }
 
     private Offer getOffer(final UUID offerId) {
         return this.offerRepository.findById(offerId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Offer with id '%s' does not exist.".formatted(offerId)));
+                .orElseThrow(() -> new ResourceNotFoundException("Offer", offerId));
     }
 
     private BookingDTO toBookingDTO(final Booking booking, final UUID currentUserId) {
