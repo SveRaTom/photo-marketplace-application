@@ -2,6 +2,8 @@ package photomarketplace.customoffer.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -30,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -87,6 +90,67 @@ class CustomOfferRequestServiceTest {
         assertEquals("A pending custom offer request already exists for this offer.", exception.getMessage());
 
         verify(this.customOfferRequestRepository, never()).save(any(CustomOfferRequest.class));
+    }
+
+    @Test
+    void createShouldRejectMissingRequestDetails() {
+        final CustomOfferOperationException exception = assertThrows(
+                CustomOfferOperationException.class,
+                () -> this.customOfferRequestService.create(null));
+
+        assertEquals("Complete custom offer request details are required.", exception.getMessage());
+
+        verifyNoInteractions(this.customOfferRequestRepository);
+    }
+
+    @Test
+    void createShouldRejectNonFutureEventDate() {
+        final CreateCustomOfferRequestDTO request = createRequest(
+                LocalDate.now(),
+                "Sofia",
+                "Outdoor portrait photography session");
+
+        final CustomOfferOperationException exception = assertThrows(
+                CustomOfferOperationException.class,
+                () -> this.customOfferRequestService.create(request));
+
+        assertEquals("The custom offer event date must be in the future.", exception.getMessage());
+
+        verifyNoInteractions(this.customOfferRequestRepository);
+    }
+
+    @Test
+    void createShouldValidateTrimmedMessageLength() {
+        final CreateCustomOfferRequestDTO request = createRequest(
+                EVENT_DATE,
+                "Sofia",
+                "  Too short  ");
+
+        final CustomOfferOperationException exception = assertThrows(
+                CustomOfferOperationException.class,
+                () -> this.customOfferRequestService.create(request));
+
+        assertEquals("The custom offer message must be between 10 and 2000 characters.",
+                exception.getMessage());
+
+        verifyNoInteractions(this.customOfferRequestRepository);
+    }
+
+    @Test
+    void createShouldRejectOversizedLocation() {
+        final CreateCustomOfferRequestDTO request = createRequest(
+                EVENT_DATE,
+                "S".repeat(256),
+                "Outdoor portrait photography session");
+
+        final CustomOfferOperationException exception = assertThrows(
+                CustomOfferOperationException.class,
+                () -> this.customOfferRequestService.create(request));
+
+        assertEquals("The custom offer location must contain at most 255 characters.",
+                exception.getMessage());
+
+        verifyNoInteractions(this.customOfferRequestRepository);
     }
 
     @Test
@@ -198,6 +262,70 @@ class CustomOfferRequestServiceTest {
     }
 
     @Test
+    void decideShouldRequireDecision() {
+        final CustomOfferRequest customOffer = customOffer(CustomOfferStatus.PENDING);
+
+        when(this.customOfferRequestRepository.findById(CUSTOM_OFFER_ID))
+                .thenReturn(Optional.of(customOffer));
+
+        final CustomOfferOperationException exception = assertThrows(
+                CustomOfferOperationException.class,
+                () -> this.customOfferRequestService.decide(
+                        CUSTOM_OFFER_ID,
+                        PHOTOGRAPHER_ID,
+                        new CustomOfferDecisionRequestDTO(null, null)));
+
+        assertEquals("A custom offer decision is required.", exception.getMessage());
+
+        verify(this.customOfferRequestRepository, never()).save(any(CustomOfferRequest.class));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"0.00", "-1.00"})
+    void decideShouldRejectNonPositivePrice(final String price) {
+        final CustomOfferRequest customOffer = customOffer(CustomOfferStatus.PENDING);
+
+        when(this.customOfferRequestRepository.findById(CUSTOM_OFFER_ID))
+                .thenReturn(Optional.of(customOffer));
+
+        final CustomOfferOperationException exception = assertThrows(
+                CustomOfferOperationException.class,
+                () -> this.customOfferRequestService.decide(
+                        CUSTOM_OFFER_ID,
+                        PHOTOGRAPHER_ID,
+                        new CustomOfferDecisionRequestDTO(
+                                CustomOfferDecisionDTO.ACCEPT,
+                                new BigDecimal(price))));
+
+        assertEquals("The proposed price must be positive.", exception.getMessage());
+
+        verify(this.customOfferRequestRepository, never()).save(any(CustomOfferRequest.class));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"123456789.00", "10.001"})
+    void decideShouldRejectInvalidPriceDigits(final String price) {
+        final CustomOfferRequest customOffer = customOffer(CustomOfferStatus.PENDING);
+
+        when(this.customOfferRequestRepository.findById(CUSTOM_OFFER_ID))
+                .thenReturn(Optional.of(customOffer));
+
+        final CustomOfferOperationException exception = assertThrows(
+                CustomOfferOperationException.class,
+                () -> this.customOfferRequestService.decide(
+                        CUSTOM_OFFER_ID,
+                        PHOTOGRAPHER_ID,
+                        new CustomOfferDecisionRequestDTO(
+                                CustomOfferDecisionDTO.ACCEPT,
+                                new BigDecimal(price))));
+
+        assertEquals("The proposed price must have up to 8 digits and 2 decimals.",
+                exception.getMessage());
+
+        verify(this.customOfferRequestRepository, never()).save(any(CustomOfferRequest.class));
+    }
+
+    @Test
     void decideShouldRejectDifferentPhotographer() {
         final CustomOfferRequest customOffer = customOffer(CustomOfferStatus.PENDING);
 
@@ -274,13 +402,24 @@ class CustomOfferRequestServiceTest {
     }
 
     private static CreateCustomOfferRequestDTO createRequest() {
+        return createRequest(
+                EVENT_DATE,
+                "  Sofia  ",
+                "  Outdoor portrait photography session  ");
+    }
+
+    private static CreateCustomOfferRequestDTO createRequest(
+            final LocalDate eventDate,
+            final String location,
+            final String message) {
+
         return new CreateCustomOfferRequestDTO(
                 CLIENT_ID,
                 PHOTOGRAPHER_ID,
                 OFFER_ID,
-                EVENT_DATE,
-                "  Sofia  ",
-                "  Outdoor portrait photography session  ");
+                eventDate,
+                location,
+                message);
     }
 
     private static CustomOfferRequest customOffer(final CustomOfferStatus status) {
