@@ -12,6 +12,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -66,6 +67,7 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role;
@@ -75,7 +77,7 @@ public class User {
     @Column(length = 500)
     private String profileImageUrl;
 
-    @Column
+    @Column(nullable = false)
     private boolean isActive;
 
     @CreationTimestamp

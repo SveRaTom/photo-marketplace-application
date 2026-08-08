@@ -79,6 +79,7 @@ public class Offer {
     @Column(nullable = false)
     private boolean isAvailable;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "photographer_id", nullable = false)
     private User photographer;

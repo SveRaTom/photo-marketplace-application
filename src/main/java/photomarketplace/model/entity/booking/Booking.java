@@ -57,14 +57,17 @@ public class Booking {
     @Column
     private String notes;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private BookingStatus status;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id", nullable = false)
     private User client;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "offer_id", nullable = false)
     private Offer offer;
