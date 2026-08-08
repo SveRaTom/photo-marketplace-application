@@ -194,9 +194,11 @@ State-changing marketplace and custom-offer workflows include SLF4J log statemen
 
 ### Main application
 
-The shared configuration is in `src/main/resources/application.properties`, with development and production overrides in `application-dev.properties` and `application-prod.properties`.
+Shared defaults are in `src/main/resources/application.properties`. Production overrides are in
+`application-prod.properties`. The default active profile is `dev`, but `application-dev.properties` is intentionally
+ignored by Git so local credentials remain outside source control.
 
-Configure these properties for the selected profile:
+Create `src/main/resources/application-dev.properties` locally when using property-based development configuration:
 
 ```properties
 spring.datasource.username=<mysql-username>
@@ -206,9 +208,21 @@ app.client.password=<local-seed-password>
 app.admin.password=<local-seed-password>
 ```
 
-The default main database is `photo_marketplace_app_db`. The main application connects to the microservice through `integration.custom-offer-service.base-url`, which can be overridden with `CUSTOM_OFFER_SERVICE_URL`.
+The main application also supports these environment variables:
 
-When missing, the application seeds one account for each role:
+- `MAIN_APP_PORT`
+- `MAIN_DB_URL`
+- `MAIN_DB_USERNAME`
+- `MAIN_DB_PASSWORD`
+- `APP_PHOTOGRAPHER_PASSWORD`
+- `APP_CLIENT_PASSWORD`
+- `APP_ADMIN_PASSWORD`
+- `CUSTOM_OFFER_SERVICE_URL`
+
+The default port is `8080`, and the default database is `photo_marketplace_app_db`. The main application connects to
+the microservice at `http://localhost:8081` unless `CUSTOM_OFFER_SERVICE_URL` overrides it.
+
+When an account is missing and its password is configured, the application seeds one account for each role:
 
 | Role | Username | Email |
 | --- | --- | --- |
@@ -216,7 +230,8 @@ When missing, the application seeds one account for each role:
 | Client | `client` | `client@example.com` |
 | Administrator | `administrator` | `admin@example.com` |
 
-Seed passwords are read from configuration and stored BCrypt-hashed in the database. Do not commit real database or account passwords.
+Seed passwords are read from configuration and stored BCrypt-hashed in the database. Accounts with missing or blank
+seed passwords are not created. Do not commit real database or account passwords.
 
 ### Custom-offer service
 
