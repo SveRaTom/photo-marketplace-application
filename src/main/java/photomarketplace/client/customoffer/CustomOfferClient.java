@@ -23,9 +23,6 @@ public interface CustomOfferClient {
     @PostMapping("/api/custom-offers")
     CustomOfferResponseDTO create(@RequestBody CreateCustomOfferRequestDTO request);
 
-    @GetMapping("/api/custom-offers/{customOfferId}")
-    CustomOfferResponseDTO getById(@PathVariable("customOfferId") UUID customOfferId);
-
     @GetMapping(value = "/api/custom-offers", params = "clientId")
     List<CustomOfferResponseDTO> getForClient(@RequestParam("clientId") UUID clientId);
 
