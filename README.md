@@ -2,447 +2,300 @@
 
 ## Overview
 
-Photographer Portfolio Marketplace is a Spring Boot web application that connects photographers and clients through photography offers, bookings, portfolio photos, and client reviews.
+Photographer Portfolio Marketplace connects photographers and clients through photography offers, bookings, portfolio photos, reviews, and custom offer requests. The solution contains two independently runnable Spring Boot applications:
 
-Photographers can publish offers, attach portfolio photos to those offers, choose a cover photo, manage booking requests, and receive reviews. Clients can browse offers, request bookings, cancel eligible bookings, and review offers after an approved or completed booking.
+- The main MVC application provides the Thymeleaf user interface, authentication, authorization, and the core marketplace workflows.
+- `custom-offer-service` provides a domain-specific REST API for creating, deciding, and withdrawing custom photography offer requests.
 
-The application uses server-rendered Thymeleaf pages with `ModelAndView`, session-based login, server-side validation, and role-aware business rules.
-
----
+The applications communicate through Spring Cloud OpenFeign and use separate MySQL databases.
 
 ## Technology Stack
 
-* Java 21
-* Spring Boot 3.4
-* Spring MVC
-* Spring Data JPA
-* Thymeleaf
-* MySQL
-* Hibernate
-* Maven
-* Lombok
-* HTML5
-* CSS3
-* JavaScript
+- Java 21
+- Spring Boot 3.4.0
+- Spring MVC and Thymeleaf
+- Spring Security with CSRF protection
+- Spring Data JPA and Hibernate
+- Spring Cloud OpenFeign
+- Spring Cache
+- Spring Scheduling
+- MySQL and H2 for tests
+- Jakarta Bean Validation
+- Maven
+- Lombok
+- JUnit 5, Mockito, MockMvc, and JaCoCo
+- HTML5, CSS3, and JavaScript
 
----
+## Project Structure
 
-## User Roles
+```text
+photo-marketplace-application/
+├── src/                         Main Spring Boot MVC application
+├── custom-offer-service/        Independent Spring Boot REST microservice
+│   ├── pom.xml
+│   └── src/
+├── pom.xml                      Main application Maven build
+└── README.md
+```
+
+The main application runs on port `8080`. The custom-offer service runs on port `8081` by default and can be configured independently.
+
+## User Roles and Security
+
+Spring Security provides form-based authentication, BCrypt password hashing, role-based authorization, session management, and CSRF protection.
 
 ### Guest
 
-* View the public landing page
-* Register
-* Login
-* Browse public offers and public offer details
+- View the landing page
+- Register and log in
+- Browse offers, public offer details, photos, and reviews
 
 ### Client
 
-* Browse photography offers
-* View offer details, offer photos, and offer reviews
-* Create booking requests for available offers
-* View own bookings
-* Edit pending bookings
-* Cancel pending or approved bookings
-* Create reviews for approved or completed bookings
-* Edit and delete own reviews
+- Browse offers and photographer portfolios
+- Create, edit, and cancel eligible bookings
+- Create, edit, and delete eligible reviews
+- Request a custom offer from a photographer
+- View and withdraw pending custom offer requests
+- View and edit their own profile
 
 ### Photographer
 
-* Create, edit, and delete own offers
-* View own offers
-* Add, edit, and delete photos for own offers
-* Set an offer cover photo
-* View bookings related to own offers
-* Approve or reject pending booking requests
-* View reviews related to own offers
+- Create, edit, and delete owned offers
+- Add, edit, delete, and select cover photos for owned offers
+- Approve or reject booking requests
+- View portfolio, bookings, and received reviews
+- Review custom requests and accept them with a proposed price or decline them
+- View dashboard statistics, upcoming bookings, and recent reviews
+- View and edit their own profile
 
----
+### Administrator
 
-## Implemented Features
+- View registered users
+- Change another user's role
+- Access administrator-only routes
+- View and edit their own profile
 
-### Authentication
+Public, authenticated, and role-protected endpoints are configured separately. Ownership and status rules are also enforced in the service layer.
 
-* User registration
-* User login and logout
-* Session-based authentication with `HttpSession`
-* BCrypt password hashing
-* Photographer and Client account types
+## Main Application Features
 
 ### Offers
 
-* Public offer listing
-* Offer details page
-* Photographer-only create, edit, and delete operations for owned offers
-* My Offers page for photographers
-* Availability, price, duration, location, and cover photo display
+- Public offer catalog and offer details
+- Photographer-owned offer creation, editing, and deletion
+- Availability, price, duration, location, and cover photo management
+- Cached offer catalog, offer details, and photographer offer lists
+- Cache eviction after offer state changes
 
 ### Photos
 
-* Offer photo gallery
-* Photographer portfolio page
-* Photo details page
-* Photographer-only create, edit, and delete operations for photos on owned offers
-* Set photo as offer cover photo
-* Photo images are currently stored as image URLs
+- Offer galleries and photographer portfolios
+- Photo details
+- Photographer-owned photo creation, editing, and deletion
+- Cover photo selection
+- Image URL-based media storage
 
 ### Bookings
 
-* Booking creation from an offer
-* My Bookings page
-* Booking details page
-* Client edit for pending bookings
-* Client cancellation for pending or approved bookings
-* Photographer approval or rejection for pending bookings
-* Booking statuses: `PENDING`, `APPROVED`, `REJECTED`, `COMPLETED`, `CANCELLED`
+- Client booking requests for available offers
+- Client editing of pending bookings
+- Client cancellation of pending or approved bookings
+- Photographer approval or rejection of pending requests
+- Status lifecycle: `PENDING`, `APPROVED`, `REJECTED`, `COMPLETED`, and `CANCELLED`
 
 ### Reviews
 
-* Offer reviews page
-* Review details page
-* My Reviews page
-* Five-star rating system
-* Written review comments
-* Client review creation for approved or completed bookings
-* One review per booking
-* Review author can edit or delete own reviews
+- Reviews associated with an offer and a booking
+- One review per eligible booking
+- Ratings from one to five and written feedback
+- Client-owned review creation, editing, and deletion
 
-### UI
+### Custom Offers
 
-* Thymeleaf templates for all main CRUD flows
-* Shared header, navbar, and footer fragments
-* User-friendly confirmation dialogs
-* Custom 404 page
-* Responsive card and action button styling
+- A client requests a tailored photography service for an existing offer
+- A photographer accepts the request with a proposed price or declines it
+- A client withdraws a pending request
+- Both roles can view their relevant custom offer requests
+- All custom offer state is persisted by the separate REST microservice
 
----
+### User Management
+
+- Registration and login
+- Profile viewing and editing for authenticated users
+- Photographer dashboard
+- Administrator user and role management
 
 ## Domain Model
 
-### User
+All persisted entities use UUID primary keys.
 
-Represents an application user.
+### Main application
 
-Key fields and relationships:
+- `User` represents a client, photographer, or administrator.
+- `Offer` represents a photography service published by a photographer.
+- `Photo` represents an image attached to an offer.
+- `Booking` represents a client's reservation request for an offer.
+- `Review` represents client feedback linked to a booking and offer.
 
-* `id`
-* `firstName`
-* `lastName`
-* `username`
-* `email`
-* `password`
-* `role`
-* `profileImageUrl`
-* `isActive`
-* `offers`
-* `bookings`
-* `reviews`
-* `createdAt`
-* `updatedAt`
+The model includes JPA relationships between users, offers, photos, bookings, and reviews.
 
-### Offer
+### Custom-offer service
 
-Represents a photography offer published by a photographer.
+- `CustomOfferRequest` stores the client, photographer, and offer identifiers together with event details, the client's message, an optional proposed price, and its status.
+- Status lifecycle: `PENDING`, `ACCEPTED`, `DECLINED`, and `WITHDRAWN`.
 
-Key fields and relationships:
+## REST Microservice API
 
-* `id`
-* `title`
-* `description`
-* `price`
-* `durationHours`
-* `location`
-* `isAvailable`
-* `photographer`
-* `coverPhoto`
-* `photos`
-* `bookings`
-* `reviews`
-* `createdAt`
-* `updatedAt`
+The custom-offer service exposes this API. The main application consumes the create, list, decision, and withdrawal operations through `CustomOfferClient`:
 
-### Photo
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| `POST` | `/api/custom-offers` | Create a custom offer request |
+| `GET` | `/api/custom-offers/{customOfferId}` | Retrieve one request |
+| `GET` | `/api/custom-offers?clientId={clientId}` | Retrieve a client's requests |
+| `GET` | `/api/custom-offers?photographerId={photographerId}` | Retrieve a photographer's requests |
+| `PUT` | `/api/custom-offers/{customOfferId}/decision?photographerId={photographerId}` | Accept or decline a pending request |
+| `DELETE` | `/api/custom-offers/{customOfferId}?clientId={clientId}` | Withdraw a pending request |
 
-Represents an image attached to an offer.
+The microservice returns JSON responses and meaningful validation, not-found, and invalid-operation errors. The main application translates integration failures into user-facing MVC error pages or form messages.
 
-Key fields and relationships:
+## Validation and Error Handling
 
-* `id`
-* `title`
-* `imageUrl`
-* `description`
-* `offer`
-* `createdAt`
-* `updatedAt`
+Both applications validate incoming DTOs, persisted entities, and service-layer business rules.
 
-### Booking
+Examples include:
 
-Represents a booking request for an offer.
+- Required and correctly formatted account data
+- Positive offer prices and durations
+- Future booking and custom-offer dates
+- Required locations and descriptions
+- Review ratings between one and five
+- Ownership, role, state-transition, and duplicate-request rules
 
-Key fields and relationships:
+Each application has centralized handlers for built-in and custom exceptions. The main application uses branded error views instead of the Spring Whitelabel page; the microservice returns structured JSON errors.
 
-* `id`
-* `eventDate`
-* `location`
-* `notes`
-* `status`
-* `client`
-* `offer`
-* `review`
-* `createdAt`
-* `updatedAt`
+## Caching and Scheduled Jobs
 
-### Review
+The main application uses Spring's caching abstraction for offer reads. Relevant caches are evicted when offers or associated cover-photo state changes.
 
-Represents feedback connected to a booking and offer.
+Two scheduled jobs affect marketplace state:
 
-Key fields and relationships:
+- A cron job marks offers unavailable after the configured stale period.
+- A fixed-delay job marks past approved bookings as completed.
 
-* `id`
-* `rating`
-* `comment`
-* `author`
-* `offer`
-* `booking`
-* `createdAt`
-* `updatedAt`
+The schedule values are configurable in `src/main/resources/application.properties`.
 
----
+## Logging
 
-## Main Routes
-
-### Public and Auth
-
-* `GET /` - landing page
-* `GET /login` - login page
-* `POST /login` - login action
-* `GET /register` - registration page
-* `POST /register` - registration action
-* `GET /home` - authenticated home page
-* `POST /logout` - logout action
-
-### Offers
-
-* `GET /offers` - all offers
-* `GET /offers/{id}` - offer details
-* `GET /my-offers` - photographer's own offers
-* `GET /offers/create` - create offer page
-* `POST /offers/create` - create offer
-* `GET /offers/edit/{id}` - edit offer page
-* `PUT /offers/edit/{id}` - update offer
-* `POST /offers/delete/{id}` - delete offer
-
-### Photos
-
-* `GET /portfolio` - photographer portfolio photos
-* `GET /photos` - redirect to portfolio
-* `GET /offers/{offerId}/photos` - photos for an offer
-* `GET /photos/{id}` - photo details
-* `GET /photos/create/{offerId}` - create photo page
-* `POST /photos/create/{offerId}` - create photo
-* `GET /photos/edit/{id}` - edit photo page
-* `PUT /photos/edit/{id}` - update photo
-* `POST /photos/delete/{id}` - delete photo
-* `POST /photos/{id}/cover` - set offer cover photo
-
-### Bookings
-
-* `GET /bookings` - bookings visible to the current user
-* `GET /my-bookings` - current user's bookings
-* `GET /bookings/{id}` - booking details
-* `GET /bookings/create/{offerId}` - create booking page
-* `POST /bookings/create/{offerId}` - create booking
-* `GET /bookings/edit/{id}` - edit booking page
-* `PUT /bookings/edit/{id}` - update booking
-* `POST /bookings/delete/{id}` - cancel booking
-* `POST /bookings/{id}/approve` - approve booking
-* `POST /bookings/{id}/reject` - reject booking
-
-### Reviews
-
-* `GET /reviews` - reviews visible to the current user
-* `GET /reviews/{id}` - review details
-* `GET /offers/{offerId}/reviews` - reviews for an offer
-* `GET /reviews/create/{bookingId}` - create review page
-* `POST /reviews/create/{bookingId}` - create review
-* `GET /reviews/edit/{id}` - edit review page
-* `PUT /reviews/edit/{id}` - update review
-* `POST /reviews/delete/{id}` - delete review
-
----
-
-## Authorization Rules
-
-* Only the owner photographer can manage an offer.
-* Only the owner photographer can manage photos for an offer.
-* Only the owner photographer can set an offer cover photo.
-* A user cannot book their own offer.
-* A booking is visible to the booking client and to the photographer who owns the booked offer.
-* Only the booking client can edit a pending booking.
-* Only the booking client can cancel a pending or approved booking.
-* Only the offer photographer can approve or reject a pending booking.
-* Only the booking client can review an approved or completed booking.
-* A booking can have only one review.
-* Only the review author can edit or delete the review.
-
----
-
-## Validation
-
-All create and edit forms use server-side validation with Jakarta Bean Validation and display field-level errors through Thymeleaf.
-
-Examples:
-
-* Offers require title, description, price, duration, location, and availability.
-* Photos require a non-empty image URL value.
-* Bookings require a future event date and location.
-* Reviews require a rating from 1 to 5 and a comment.
-* Users require valid credentials and account data.
-
----
+State-changing marketplace and custom-offer workflows include SLF4J log statements. Scheduled jobs also log their results, and integration failures are logged without exposing sensitive credentials.
 
 ## Configuration
 
-The project uses one shared configuration file and environment-specific profile files:
+### Main application
 
-* `src/main/resources/application.properties`
-* `src/main/resources/application-dev.properties`
-* `src/main/resources/application-prod.properties`
+The shared configuration is in `src/main/resources/application.properties`, with development and production overrides in `application-dev.properties` and `application-prod.properties`.
 
-The shared `application.properties` defines the application name and uses the development profile as the default profile:
+Configure these properties for the selected profile:
 
 ```properties
-spring.application.name=Photo Marketplace Application
-spring.profiles.default=dev
+spring.datasource.username=<mysql-username>
+spring.datasource.password=<mysql-password>
+app.photographer.password=<local-seed-password>
+app.client.password=<local-seed-password>
+app.admin.password=<local-seed-password>
 ```
 
-Production can still be selected explicitly through the command line, IDE run configuration, or environment.
+The default main database is `photo_marketplace_app_db`. The main application connects to the microservice through `integration.custom-offer-service.base-url`, which can be overridden with `CUSTOM_OFFER_SERVICE_URL`.
 
-Required settings:
+When missing, the application seeds one account for each role:
 
-* MySQL JDBC URL
-* MySQL username
-* MySQL password
-* `app.photographer.password`
-* `app.client.password`
+| Role | Username | Email |
+| --- | --- | --- |
+| Photographer | `photographer` | `photographer@example.com` |
+| Client | `client` | `client@example.com` |
+| Administrator | `administrator` | `admin@example.com` |
 
-The application creates two seed users only when the user table is empty:
+Seed passwords are read from configuration and stored BCrypt-hashed in the database. Do not commit real database or account passwords.
 
-* Photographer username: `photographer`
-* Photographer email: `photographer@example.com`
-* Client username: `client`
-* Client email: `client@example.com`
+### Custom-offer service
 
-The seed passwords come from `app.photographer.password` and `app.client.password`.
+The service configuration is in `custom-offer-service/src/main/resources/application.properties`. It supports these environment variables:
 
----
+- `CUSTOM_OFFER_SERVICE_PORT`
+- `CUSTOM_OFFER_DB_URL`
+- `CUSTOM_OFFER_DB_USERNAME`
+- `CUSTOM_OFFER_DB_PASSWORD`
 
-## Installation and Run
+Its default database is `photo_marketplace_custom_offer_db`, separate from the main database.
 
-1. Clone the repository.
-2. Create or start a MySQL database server.
-3. Configure `application-dev.properties` or `application-prod.properties`.
-4. Build the project:
+## Build and Run
 
-   ```bash
-   mvn clean package
-   ```
+Prerequisites:
 
-5. Run the application with the default development profile:
+- JDK 21
+- Maven 3.9 or later
+- A running MySQL server
 
-   ```bash
-   mvn spring-boot:run
-   ```
+Build both applications from the repository root:
 
-6. Or run the packaged JAR with the default development profile:
+```bash
+mvn clean package
+mvn -f custom-offer-service/pom.xml clean package
+```
 
-   ```bash
-   java -jar target/photo-marketplace-application-0.0.1-SNAPSHOT.jar
-   ```
+Start the custom-offer service first:
 
-   To run with the production profile, pass it explicitly:
+```bash
+mvn -f custom-offer-service/pom.xml spring-boot:run
+```
 
-   ```bash
-   java -jar target/photo-marketplace-application-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod
-   ```
+Then start the main application in another terminal:
 
-7. Open the application:
+```bash
+mvn spring-boot:run
+```
 
-   ```text
-   http://localhost:8080
-   ```
+Open the main application at `http://localhost:8080`. The custom-offer API and health endpoint are available on port `8081` by default.
 
----
+To run packaged JARs instead, use:
 
-## User Workflow
+```bash
+java -jar custom-offer-service/target/photo-marketplace-custom-offer-service-0.0.1-SNAPSHOT.jar
+java -jar target/photo-marketplace-application-0.0.1-SNAPSHOT.jar
+```
 
-### Photographer
+## Testing and Coverage
 
-1. Register or log in as a photographer.
-2. Create photography offers.
-3. Add photos to offers.
-4. Set cover photos.
-5. Review incoming booking requests.
-6. Approve or reject pending bookings.
-7. View reviews related to owned offers.
+Both applications contain unit, Spring integration, and API/controller tests. H2 supplies isolated test databases, MockMvc tests HTTP behavior, and JaCoCo generates line-coverage reports.
 
-### Client
+Run the main application tests:
 
-1. Register or log in as a client.
-2. Browse available offers.
-3. View offer details, photos, and reviews.
-4. Create a booking request.
-5. Edit the booking while it is pending.
-6. Cancel a pending or approved booking if needed.
-7. Leave a review after an approved or completed booking.
+```bash
+mvn clean test
+```
 
----
+Run the custom-offer service tests:
 
-## Current Media Handling
+```bash
+mvn -f custom-offer-service/pom.xml clean test
+```
 
-Photos are currently saved by URL through the `imageUrl` field. The application does not yet upload binary image files to local storage or cloud storage.
+Coverage reports are generated at:
 
----
+- `target/site/jacoco/index.html`
+- `custom-offer-service/target/site/jacoco/index.html`
 
-## Future Enhancements
+## Main Web Routes
 
-### Marketplace
-
-* Advanced search and filtering
-* Offer categories
-* Photographer verification
-* Favorites and bookmarks
-
-### Scheduling
-
-* Availability calendar
-* Time slot management
-* Booking conflict prevention
-* Automatic completion of past approved bookings
-
-### Communication
-
-* Internal messaging
-* Email notifications
-* Booking reminders
-
-### Payments
-
-* Online payment integration
-* Deposits and invoices
-* Refund management
-
-### Media
-
-* Local image upload support
-* Cloud storage integration
-* Image resizing and optimization
-* Watermarking
-
-### Administration
-
-* Admin role
-* Admin dashboard
-* User moderation
-* Review moderation
-* Platform analytics
+- `/` - public landing page
+- `/offers` - public offer catalog
+- `/dashboard` - photographer dashboard
+- `/profile` - authenticated user's profile
+- `/my-offers` - photographer's offers
+- `/portfolio` - photographer's photos
+- `/my-bookings` - current user's bookings
+- `/reviews` - reviews relevant to the current user
+- `/custom-offers` - client's custom requests
+- `/photographer/custom-offers` - photographer's custom requests
+- `/admin/users` - administrator user management
