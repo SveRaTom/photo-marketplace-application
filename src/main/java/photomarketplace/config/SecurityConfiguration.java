@@ -34,8 +34,7 @@ public class SecurityConfiguration {
                                 "/offers/*/photos",
                                 "/offers/*/reviews",
                                 "/photos/*",
-                                "/reviews/*",
-                                "/photographers/*")
+                                "/reviews/*")
                         .permitAll()
                         .requestMatchers("/admin/**")
                         .hasRole("ADMIN")
