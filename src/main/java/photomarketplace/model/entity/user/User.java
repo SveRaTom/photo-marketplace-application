@@ -45,21 +45,22 @@ public class User {
     private UUID id;
 
     @Size(min = 2, max = 50)
-    @Column
+    @Column(length = 50)
     private String firstName;
 
     @Size(min = 2, max = 50)
-    @Column
+    @Column(length = 50)
     private String lastName;
 
     @NotBlank
-    @Size(min = 6)
-    @Column(nullable = false, unique = true)
+    @Size(min = 6, max = 50)
+    @Column(nullable = false, unique = true, length = 50)
     private String username;
 
     @NotBlank
     @Email
-    @Column(nullable = false, unique = true)
+    @Size(max = 254)
+    @Column(nullable = false, unique = true, length = 254)
     private String email;
 
     @NotBlank
