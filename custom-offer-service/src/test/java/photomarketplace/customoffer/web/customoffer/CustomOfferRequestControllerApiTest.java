@@ -75,6 +75,7 @@ class CustomOfferRequestControllerApiTest {
         verify(this.customOfferRequestService).create(request);
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void createShouldReturnValidationErrorsForInvalidRequest() throws Exception {
         final CreateCustomOfferRequestDTO invalidRequest = new CreateCustomOfferRequestDTO(
@@ -202,6 +203,7 @@ class CustomOfferRequestControllerApiTest {
         verify(this.customOfferRequestService).decide(CUSTOM_OFFER_ID, PHOTOGRAPHER_ID, request);
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void decideShouldReturnValidationErrorWhenDecisionIsMissing() throws Exception {
         final CustomOfferDecisionRequestDTO invalidRequest = new CustomOfferDecisionRequestDTO(null, null);

@@ -261,6 +261,7 @@ class CustomOfferRequestServiceTest {
         verify(this.customOfferRequestRepository, never()).save(any(CustomOfferRequest.class));
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void decideShouldRequireDecision() {
         final CustomOfferRequest customOffer = customOffer(CustomOfferStatus.PENDING);
