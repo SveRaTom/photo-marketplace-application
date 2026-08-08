@@ -54,7 +54,7 @@ public class Booking {
     private String location;
 
     @Size(max = 2000)
-    @Column
+    @Column(length = 2000)
     private String notes;
 
     @NotNull

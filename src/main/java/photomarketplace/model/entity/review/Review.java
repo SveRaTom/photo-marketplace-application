@@ -50,7 +50,7 @@ public class Review {
 
     @NotBlank
     @Size(min = 10, max = 2000)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 2000)
     private String comment;
 
     @NotNull

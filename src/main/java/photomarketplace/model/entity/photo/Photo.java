@@ -38,16 +38,16 @@ public class Photo {
     private UUID id;
 
     @Size(max = 100)
-    @Column
+    @Column(length = 100)
     private String title;
 
     @NotBlank
     @Size(max = 500)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 500)
     private String imageUrl;
 
     @Size(max = 1000)
-    @Column
+    @Column(length = 1000)
     private String description;
 
     @NotNull
