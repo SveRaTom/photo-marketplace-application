@@ -233,6 +233,7 @@ class CustomOfferServiceTest {
         verify(this.customOfferClient).decide(CUSTOM_OFFER_ID, PHOTOGRAPHER_ID, expectedClientRequest);
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void decideShouldRejectMissingDecision() {
         when(this.userService.getUser(PHOTOGRAPHER_ID)).thenReturn(user(UserRole.PHOTOGRAPHER));
