@@ -1,5 +1,6 @@
 package photomarketplace.web.exception;
 
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
@@ -13,6 +14,7 @@ import photomarketplace.exception.InvalidOperationException;
 import photomarketplace.exception.ResourceNotFoundException;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -76,6 +78,21 @@ class GlobalExceptionHandlerTest {
     void invalidBuiltInRequestShouldReturnSafe400Message() {
         final ModelAndView response = this.exceptionHandler.handleInvalidRequest(
                 new IllegalArgumentException("Internal conversion detail"),
+                this.request
+        );
+
+        assertErrorResponse(
+                response,
+                HttpStatus.BAD_REQUEST,
+                "Invalid request",
+                "The request contains an invalid value."
+        );
+    }
+
+    @Test
+    void serviceValidationFailureShouldReturnSafe400Message() {
+        final ModelAndView response = this.exceptionHandler.handleInvalidRequest(
+                new ConstraintViolationException(Set.of()),
                 this.request
         );
 
