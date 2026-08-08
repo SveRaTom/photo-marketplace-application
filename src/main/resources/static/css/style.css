@@ -58,7 +58,6 @@ body {
     white-space: nowrap;
 }
 
-/* Logout button styling */
 .nav-link-btn {
     background: transparent;
     color: #ef4444;
@@ -76,12 +75,10 @@ body {
     box-shadow: 0 6px 14px rgba(239, 68, 68, 0.25);
 }
 
-/* Navbar enhancements for better layout */
 nav.navbar {
     width: 100%;
 }
 
-/* Responsive design */
 @media (max-width: 768px) {
     .nav-links {
         gap: 1rem;
@@ -346,7 +343,6 @@ textarea.form-control {
     background: #15803d;
 }
 
-/* Custom select styling to make role menu bigger and prettier */
 .select-wrapper {
     position: relative;
 }
@@ -454,7 +450,6 @@ textarea.form-control {
     line-height: 1;
 }
 
-/* HTML5 invalid input styling for immediate feedback */
 .form-control:invalid {
     border-color: #dc2626;
 }
@@ -504,8 +499,6 @@ textarea.form-control {
 .feature-card h3 {
     margin-bottom: 10px;
 }
-
-/* DASHBOARD */
 
 .dashboard-stats {
     display: grid;
@@ -595,8 +588,6 @@ textarea.form-control {
     line-height: 1.6;
 }
 
-/* TABLES */
-
 .dashboard-table {
     width: 100%;
     border-collapse: collapse;
@@ -611,8 +602,6 @@ textarea.form-control {
 .dashboard-table th {
     text-align: left;
 }
-
-/* BADGES */
 
 .badge {
     padding: .35rem .8rem;
@@ -930,8 +919,6 @@ textarea.form-control {
     gap: .75rem;
 }
 
-/* OFFER CARDS */
-
 .details-card {
     max-width: 900px;
     margin: 2rem auto;
@@ -1142,8 +1129,6 @@ textarea.form-control {
     transform: translateY(-2px);
 }
 
-/* OFFER DETAILS */
-
 .offer-hero {
     display: grid;
     grid-template-columns: minmax(320px, .95fr) minmax(420px, 1.35fr);
@@ -1211,8 +1196,6 @@ textarea.form-control {
 .reviews-section {
     margin-bottom: 5rem;
 }
-
-/* PHOTO GRID */
 
 .photo-grid {
     display: grid;
@@ -1351,8 +1334,6 @@ textarea.form-control {
     display: block;
 }
 
-/* REVIEWS */
-
 .review-card,
 .review-widget {
     background: #f9fafb;
@@ -1366,7 +1347,6 @@ textarea.form-control {
     margin: .5rem 0;
 }
 
-/* Buttons */
 .btn-primary {
     background: #2563eb;
     color: white;
@@ -1383,7 +1363,6 @@ textarea.form-control {
     background: #1e40af;
 }
 
-/* Offer meta */
 .price {
     color: #111827;
     font-weight: 700;
@@ -1515,22 +1494,18 @@ textarea.form-control {
     }
 }
 
-/* Small helper */
 .form-already {
     margin-top: 12px;
     text-align: center;
     color: #374151;
 }
 
-/* Auth card button sizing */
-/* Centered, tighter auth buttons on desktop, */
-/* full-width on small screens */
 .auth-card .btn-primary,
 .auth-card .btn {
-    display: block;             /* keep block so margin:auto centers it */
-    width: auto;                /* auto width so it's not full-width by default */
-    padding: 10px 28px;         /* tighter vertical padding, roomy horizontal padding */
-    margin: 1.25rem auto 0;     /* center horizontally */
+    display: block;
+    width: auto;
+    padding: 10px 28px;
+    margin: 1.25rem auto 0;
     font-size: 1.05rem;
     font-weight: 600;
     letter-spacing: 0.2px;
@@ -1538,7 +1513,6 @@ textarea.form-control {
     text-align: center;
 }
 
-/* Keep large, easy-to-tap buttons on narrow viewports */
 @media (max-width: 600px) {
     .auth-card .btn-primary,
     .auth-card .btn {
@@ -1615,7 +1589,6 @@ textarea.form-control {
     }
 }
 
-/* Make sure form controls inside auth cards are full width */
 .auth-card .form-control {
     width: 100%;
 }
