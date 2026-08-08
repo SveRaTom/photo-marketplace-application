@@ -67,7 +67,7 @@ public class CustomOfferRequest {
     @Column(nullable = false, length = 2000)
     private String message;
 
-    @DecimalMin("0.00")
+    @DecimalMin("0.01")
     @Digits(integer = 8, fraction = 2)
     @Column(precision = 10, scale = 2)
     private BigDecimal proposedPrice;

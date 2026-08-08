@@ -14,6 +14,8 @@ import photomarketplace.customoffer.model.entity.CustomOfferRequest;
 import photomarketplace.customoffer.model.entity.CustomOfferStatus;
 import photomarketplace.customoffer.repository.CustomOfferRequestRepository;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,6 +32,8 @@ public class CustomOfferRequestService {
     }
 
     public CustomOfferResponseDTO create(final CreateCustomOfferRequestDTO request) {
+        requireCreateRequest(request);
+
         if (this.customOfferRequestRepository.existsByClientIdAndOfferIdAndStatus(
                 request.clientId(), request.offerId(), CustomOfferStatus.PENDING)) {
             throw new CustomOfferOperationException("A pending custom offer request already exists for this offer.");
@@ -79,12 +83,9 @@ public class CustomOfferRequestService {
         final CustomOfferRequest customOffer = getCustomOffer(customOfferId);
         ensurePhotographerOwnsCustomOffer(customOffer, photographerId);
         ensurePending(customOffer);
+        requireDecisionRequest(request);
 
         if (request.decision() == CustomOfferDecisionDTO.ACCEPT) {
-            if (request.proposedPrice() == null) {
-                throw new CustomOfferOperationException("An accepted custom offer must include a proposed price.");
-            }
-
             customOffer.accept(request.proposedPrice());
         } else {
             customOffer.decline();
@@ -111,6 +112,61 @@ public class CustomOfferRequestService {
         this.customOfferRequestRepository.save(customOffer);
 
         LOGGER.info("Custom offer request {} was withdrawn by client {}.", customOfferId, clientId);
+    }
+
+    private static void requireCreateRequest(final CreateCustomOfferRequestDTO request) {
+        if (request == null
+                || request.clientId() == null
+                || request.photographerId() == null
+                || request.offerId() == null
+                || request.eventDate() == null
+                || request.location() == null
+                || request.location().isBlank()
+                || request.message() == null
+                || request.message().isBlank()) {
+
+            throw new CustomOfferOperationException("Complete custom offer request details are required.");
+        }
+
+        if (!request.eventDate().isAfter(LocalDate.now())) {
+            throw new CustomOfferOperationException("The custom offer event date must be in the future.");
+        }
+
+        if (request.location().trim().length() > 255) {
+            throw new CustomOfferOperationException(
+                    "The custom offer location must contain at most 255 characters.");
+        }
+
+        final int messageLength = request.message().trim().length();
+
+        if (messageLength < 10 || messageLength > 2000) {
+            throw new CustomOfferOperationException(
+                    "The custom offer message must be between 10 and 2000 characters.");
+        }
+    }
+
+    private static void requireDecisionRequest(final CustomOfferDecisionRequestDTO request) {
+        if (request == null || request.decision() == null) {
+            throw new CustomOfferOperationException("A custom offer decision is required.");
+        }
+
+        final BigDecimal proposedPrice = request.proposedPrice();
+
+        if (request.decision() == CustomOfferDecisionDTO.ACCEPT && proposedPrice == null) {
+            throw new CustomOfferOperationException(
+                    "An accepted custom offer must include a proposed price.");
+        }
+
+        if (proposedPrice != null && proposedPrice.signum() <= 0) {
+            throw new CustomOfferOperationException("The proposed price must be positive.");
+        }
+
+        if (proposedPrice != null
+                && (proposedPrice.scale() > 2 || proposedPrice.precision() - proposedPrice.scale() > 8)) {
+
+            throw new CustomOfferOperationException(
+                    "The proposed price must have up to 8 digits and 2 decimals.");
+        }
     }
 
     private CustomOfferRequest getCustomOffer(final UUID customOfferId) {
