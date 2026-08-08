@@ -33,6 +33,8 @@ import java.util.function.Supplier;
 public class CustomOfferService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomOfferService.class);
+    private static final String DEFAULT_ERROR_MESSAGE =
+            "The custom offer request could not be completed.";
     private static final String UNAVAILABLE_MESSAGE =
             "The custom offer service is temporarily unavailable. Please try again later.";
 
@@ -198,16 +200,16 @@ public class CustomOfferService {
             final JsonNode responseBody = this.objectMapper.readTree(exception.contentUTF8());
 
             if (responseBody == null) {
-                return "The custom offer request could not be completed.";
+                return DEFAULT_ERROR_MESSAGE;
             }
 
             final String message = responseBody.path("message").asText();
 
             return message.isBlank()
-                    ? "The custom offer request could not be completed."
+                    ? DEFAULT_ERROR_MESSAGE
                     : message;
         } catch (JsonProcessingException exceptionWhileReadingResponse) {
-            return "The custom offer request could not be completed.";
+            return DEFAULT_ERROR_MESSAGE;
         }
     }
 }
