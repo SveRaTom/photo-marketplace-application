@@ -1,11 +1,14 @@
 package photomarketplace.service.offer;
 
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import photomarketplace.config.cache.CacheNames;
 import photomarketplace.config.cache.EvictOfferCaches;
 import photomarketplace.exception.ForbiddenOperationException;
@@ -31,6 +34,7 @@ import java.util.UUID;
 
 @Service
 @Transactional
+@Validated
 public class OfferService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OfferService.class);
@@ -84,7 +88,7 @@ public class OfferService {
     }
 
     @EvictOfferCaches
-    public UUID createOffer(final OfferRequestDTO offerRequest, final UUID photographerId) {
+    public UUID createOffer(@Valid @NotNull final OfferRequestDTO offerRequest, final UUID photographerId) {
         final User photographer = this.userService.getUser(photographerId);
 
         final Offer offer = Offer.builder()
@@ -107,7 +111,9 @@ public class OfferService {
     }
 
     @EvictOfferCaches
-    public void updateOffer(final UUID id, final OfferRequestDTO offerRequest, final UUID photographerId) {
+    public void updateOffer(final UUID id,
+                            @Valid @NotNull final OfferRequestDTO offerRequest,
+                            final UUID photographerId) {
         final Offer offer = getOwnedOffer(id, photographerId);
 
         offer.setTitle(offerRequest.getTitle());

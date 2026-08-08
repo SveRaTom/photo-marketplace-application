@@ -1,10 +1,13 @@
 package photomarketplace.service.booking;
 
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import photomarketplace.exception.ForbiddenOperationException;
 import photomarketplace.exception.InvalidOperationException;
 import photomarketplace.exception.ResourceNotFoundException;
@@ -33,6 +36,7 @@ import java.util.UUID;
 
 @Service
 @Transactional
+@Validated
 public class BookingService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BookingService.class);
@@ -84,7 +88,7 @@ public class BookingService {
     }
 
     public UUID createBooking(final UUID offerId,
-                              final BookingRequestDTO bookingRequest,
+                              @Valid @NotNull final BookingRequestDTO bookingRequest,
                               final UUID clientId) {
 
         final Offer offer = getOffer(offerId);
@@ -117,7 +121,7 @@ public class BookingService {
     }
 
     public void updateBooking(final UUID bookingId,
-                              final BookingRequestDTO bookingRequest,
+                              @Valid @NotNull final BookingRequestDTO bookingRequest,
                               final UUID currentUserId) {
 
         final Booking booking = getClientPendingBooking(bookingId, currentUserId);

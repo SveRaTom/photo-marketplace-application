@@ -1,10 +1,13 @@
 package photomarketplace.service.photo;
 
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import photomarketplace.config.cache.EvictOfferCaches;
 import photomarketplace.exception.ForbiddenOperationException;
 import photomarketplace.exception.ResourceNotFoundException;
@@ -22,6 +25,7 @@ import java.util.UUID;
 
 @Service
 @Transactional
+@Validated
 public class PhotoService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PhotoService.class);
@@ -70,7 +74,7 @@ public class PhotoService {
 
     @EvictOfferCaches
     public UUID createPhoto(final UUID offerId,
-                            final PhotoRequestDTO photoRequest,
+                            @Valid @NotNull final PhotoRequestDTO photoRequest,
                             final UUID photographerId) {
 
         final Offer offer = getOwnedOffer(offerId, photographerId);
@@ -97,7 +101,7 @@ public class PhotoService {
 
     @EvictOfferCaches
     public void updatePhoto(final UUID photoId,
-                            final PhotoRequestDTO photoRequest,
+                            @Valid @NotNull final PhotoRequestDTO photoRequest,
                             final UUID photographerId) {
 
         final Photo photo = getOwnedPhoto(photoId, photographerId);

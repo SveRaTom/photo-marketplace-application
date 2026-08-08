@@ -1,6 +1,7 @@
 package photomarketplace.web.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -61,7 +62,11 @@ public class GlobalExceptionHandler {
         );
     }
 
-    @ExceptionHandler({MethodArgumentTypeMismatchException.class, IllegalArgumentException.class})
+    @ExceptionHandler({
+            MethodArgumentTypeMismatchException.class,
+            ConstraintViolationException.class,
+            IllegalArgumentException.class
+    })
     public ModelAndView handleInvalidRequest(
             final Exception exception,
             final HttpServletRequest request) {

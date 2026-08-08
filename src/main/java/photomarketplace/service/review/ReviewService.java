@@ -1,10 +1,13 @@
 package photomarketplace.service.review;
 
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import photomarketplace.config.cache.EvictOfferCaches;
 import photomarketplace.exception.ForbiddenOperationException;
 import photomarketplace.exception.InvalidOperationException;
@@ -32,6 +35,7 @@ import java.util.UUID;
 
 @Service
 @Transactional
+@Validated
 public class ReviewService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReviewService.class);
@@ -92,7 +96,7 @@ public class ReviewService {
 
     @EvictOfferCaches
     public UUID createReview(final UUID bookingId,
-                             final ReviewRequestDTO reviewRequest,
+                             @Valid @NotNull final ReviewRequestDTO reviewRequest,
                              final UUID currentUserId) {
 
         final Booking booking = getBookingEligibleForReview(bookingId, currentUserId);
@@ -115,7 +119,7 @@ public class ReviewService {
 
     @EvictOfferCaches
     public void updateReview(final UUID reviewId,
-                             final ReviewRequestDTO reviewRequest,
+                             @Valid @NotNull final ReviewRequestDTO reviewRequest,
                              final UUID currentUserId) {
 
         final Review review = getOwnedReview(reviewId, currentUserId);
