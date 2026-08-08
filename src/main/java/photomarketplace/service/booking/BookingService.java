@@ -1,6 +1,8 @@
 package photomarketplace.service.booking;
 
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import photomarketplace.exception.ForbiddenOperationException;
@@ -32,6 +34,8 @@ import java.util.UUID;
 @Service
 @Transactional
 public class BookingService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(BookingService.class);
 
     private final BookingRepository bookingRepository;
     private final OfferRepository offerRepository;
@@ -104,7 +108,12 @@ public class BookingService {
                 .offer(offer)
                 .build();
 
-        return this.bookingRepository.save(booking).getId();
+        final Booking savedBooking = this.bookingRepository.save(booking);
+
+        LOGGER.info("Client {} created booking {} for offer {}.",
+                clientId, savedBooking.getId(), offerId);
+
+        return savedBooking.getId();
     }
 
     public void updateBooking(final UUID bookingId,
@@ -118,6 +127,8 @@ public class BookingService {
         booking.setNotes(bookingRequest.getNotes());
 
         this.bookingRepository.save(booking);
+
+        LOGGER.info("Client {} updated booking {}.", currentUserId, bookingId);
     }
 
     public void deleteBooking(final UUID bookingId, final UUID currentUserId) {
@@ -125,6 +136,8 @@ public class BookingService {
 
         booking.setStatus(BookingStatus.CANCELLED);
         this.bookingRepository.save(booking);
+
+        LOGGER.info("Client {} cancelled booking {}.", currentUserId, bookingId);
     }
 
     public void approveBooking(final UUID bookingId, final UUID currentUserId) {
@@ -132,6 +145,8 @@ public class BookingService {
 
         booking.setStatus(BookingStatus.APPROVED);
         this.bookingRepository.save(booking);
+
+        LOGGER.info("Photographer {} approved booking {}.", currentUserId, bookingId);
     }
 
     public void rejectBooking(final UUID bookingId, final UUID currentUserId) {
@@ -139,6 +154,8 @@ public class BookingService {
 
         booking.setStatus(BookingStatus.REJECTED);
         this.bookingRepository.save(booking);
+
+        LOGGER.info("Photographer {} rejected booking {}.", currentUserId, bookingId);
     }
 
     public int completePastApprovedBookings(final LocalDate today) {

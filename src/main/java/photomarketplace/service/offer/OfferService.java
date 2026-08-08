@@ -1,6 +1,8 @@
 package photomarketplace.service.offer;
 
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,8 @@ import java.util.UUID;
 @Service
 @Transactional
 public class OfferService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(OfferService.class);
 
     private final OfferRepository offerRepository;
     private final PhotoRepository photoRepository;
@@ -97,6 +101,8 @@ public class OfferService {
         final Offer savedOffer = this.offerRepository.save(offer);
         upsertCoverPhoto(savedOffer, offerRequest);
 
+        LOGGER.info("Photographer {} created offer {}.", photographerId, savedOffer.getId());
+
         return savedOffer.getId();
     }
 
@@ -113,6 +119,8 @@ public class OfferService {
 
         upsertCoverPhoto(offer, offerRequest);
         this.offerRepository.save(offer);
+
+        LOGGER.info("Photographer {} updated offer {}.", photographerId, id);
     }
 
     @EvictOfferCaches
@@ -122,6 +130,8 @@ public class OfferService {
         offer.setCoverPhoto(null);
         this.offerRepository.saveAndFlush(offer);
         this.offerRepository.delete(offer);
+
+        LOGGER.info("Photographer {} deleted offer {}.", photographerId, id);
     }
 
     @EvictOfferCaches

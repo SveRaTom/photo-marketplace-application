@@ -1,6 +1,8 @@
 package photomarketplace.service.review;
 
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import photomarketplace.config.cache.EvictOfferCaches;
@@ -31,6 +33,8 @@ import java.util.UUID;
 @Service
 @Transactional
 public class ReviewService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReviewService.class);
 
     private final ReviewRepository reviewRepository;
     private final BookingRepository bookingRepository;
@@ -103,6 +107,9 @@ public class ReviewService {
         final Review savedReview = this.reviewRepository.save(review);
         booking.setReview(savedReview);
 
+        LOGGER.info("Client {} created review {} for booking {}.",
+                currentUserId, savedReview.getId(), bookingId);
+
         return savedReview.getId();
     }
 
@@ -117,6 +124,8 @@ public class ReviewService {
         review.setComment(reviewRequest.getComment());
 
         this.reviewRepository.save(review);
+
+        LOGGER.info("Author {} updated review {}.", currentUserId, reviewId);
     }
 
     @EvictOfferCaches
@@ -125,6 +134,8 @@ public class ReviewService {
 
         review.getBooking().setReview(null);
         this.reviewRepository.delete(review);
+
+        LOGGER.info("Author {} deleted review {}.", currentUserId, reviewId);
     }
 
     private Review getOwnedReview(final UUID reviewId, final UUID currentUserId) {
