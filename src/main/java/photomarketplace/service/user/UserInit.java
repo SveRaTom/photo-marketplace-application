@@ -34,6 +34,8 @@ public class UserInit implements CommandLineRunner {
         createIfMissing(
                 users,
                 "photographer",
+                "Alex",
+                "Morgan",
                 "photographer@example.com",
                 this.photographerPassword,
                 UserRole.PHOTOGRAPHER
@@ -41,6 +43,8 @@ public class UserInit implements CommandLineRunner {
         createIfMissing(
                 users,
                 "client",
+                "Emma",
+                "Carter",
                 "client@example.com",
                 this.clientPassword,
                 UserRole.CLIENT
@@ -48,6 +52,8 @@ public class UserInit implements CommandLineRunner {
         createIfMissing(
                 users,
                 "administrator",
+                "System",
+                "Administrator",
                 "admin@example.com",
                 this.administratorPassword,
                 UserRole.ADMIN
@@ -57,6 +63,8 @@ public class UserInit implements CommandLineRunner {
     private void createIfMissing(
             final List<UserDTO> users,
             final String username,
+            final String firstName,
+            final String lastName,
             final String email,
             final String password,
             final UserRole role) {
@@ -80,7 +88,7 @@ public class UserInit implements CommandLineRunner {
                 .role(role)
                 .build();
 
-        this.userService.registerInitialUser(registration);
+        this.userService.registerInitialUser(registration, firstName, lastName);
 
         log.info("{} account created with username '{}'.", role, username);
     }

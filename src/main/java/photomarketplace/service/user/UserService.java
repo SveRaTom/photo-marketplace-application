@@ -49,14 +49,20 @@ public class UserService {
                     "Only client or photographer accounts can be created through registration.");
         }
 
-        createUser(userRegisterRequest);
+        createUser(userRegisterRequest, null, null);
     }
 
-    void registerInitialUser(final UserRegisterRequestDTO userRegisterRequest) {
-        createUser(userRegisterRequest);
+    void registerInitialUser(final UserRegisterRequestDTO userRegisterRequest,
+                             final String firstName,
+                             final String lastName) {
+
+        createUser(userRegisterRequest, firstName, lastName);
     }
 
-    private void createUser(final UserRegisterRequestDTO userRegisterRequest) {
+    private void createUser(final UserRegisterRequestDTO userRegisterRequest,
+                            final String firstName,
+                            final String lastName) {
+
         final String normalizedEmail = normalizeEmail(userRegisterRequest.getEmail());
 
         this.userRepository.findByEmailIgnoreCase(normalizedEmail)
@@ -69,6 +75,8 @@ public class UserService {
         userRegisterRequest.setPassword(encodedPassword);
 
         final User userEntity = UserMapper.toUserEntity(userRegisterRequest);
+        userEntity.setFirstName(firstName);
+        userEntity.setLastName(lastName);
 
         this.userRepository.save(userEntity);
     }
