@@ -11,7 +11,9 @@ import photomarketplace.model.entity.user.UserRole;
 
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -45,17 +47,23 @@ class UserInitTest {
                 request.getRole() == UserRole.PHOTOGRAPHER
                         && "photographer".equals(request.getUsername())
                         && "photographer@example.com".equals(request.getEmail())
-                        && PHOTOGRAPHER_PASSWORD.equals(request.getPassword())));
+                        && PHOTOGRAPHER_PASSWORD.equals(request.getPassword())),
+                eq("Alex"),
+                eq("Morgan"));
         verify(this.userService).registerInitialUser(argThat(request ->
                 request.getRole() == UserRole.CLIENT
                         && "client".equals(request.getUsername())
                         && "client@example.com".equals(request.getEmail())
-                        && CLIENT_PASSWORD.equals(request.getPassword())));
+                        && CLIENT_PASSWORD.equals(request.getPassword())),
+                eq("Emma"),
+                eq("Carter"));
         verify(this.userService).registerInitialUser(argThat(request ->
                 request.getRole() == UserRole.ADMIN
                         && "administrator".equals(request.getUsername())
                         && "admin@example.com".equals(request.getEmail())
-                        && ADMINISTRATOR_PASSWORD.equals(request.getPassword())));
+                        && ADMINISTRATOR_PASSWORD.equals(request.getPassword())),
+                eq("System"),
+                eq("Administrator"));
     }
 
     @Test
@@ -81,11 +89,11 @@ class UserInitTest {
         this.userInit.run();
 
         verify(this.userService, never()).registerInitialUser(argThat(request ->
-                request.getRole() == UserRole.PHOTOGRAPHER));
+                request.getRole() == UserRole.PHOTOGRAPHER), anyString(), anyString());
         verify(this.userService).registerInitialUser(argThat(request ->
-                request.getRole() == UserRole.CLIENT));
+                request.getRole() == UserRole.CLIENT), anyString(), anyString());
         verify(this.userService).registerInitialUser(argThat(request ->
-                request.getRole() == UserRole.ADMIN));
+                request.getRole() == UserRole.ADMIN), anyString(), anyString());
     }
 
     private void setPasswords(final String photographerPassword,

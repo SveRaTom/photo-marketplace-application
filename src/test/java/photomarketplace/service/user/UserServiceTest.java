@@ -71,6 +71,28 @@ class UserServiceTest {
     }
 
     @Test
+    void registerInitialUserShouldPersistConfiguredNames() {
+        final UserRegisterRequestDTO request = UserRegisterRequestDTO.builder()
+                .username("photographer")
+                .email("photographer@example.com")
+                .password("plainPassword")
+                .role(UserRole.PHOTOGRAPHER)
+                .build();
+
+        when(this.userRepository.findByEmailIgnoreCase("photographer@example.com")).thenReturn(Optional.empty());
+        when(this.passwordEncoder.encode("plainPassword")).thenReturn("hashedPassword");
+
+        this.userService.registerInitialUser(request, "Alex", "Morgan");
+
+        final ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+
+        verify(this.userRepository).save(userCaptor.capture());
+
+        assertEquals("Alex", userCaptor.getValue().getFirstName());
+        assertEquals("Morgan", userCaptor.getValue().getLastName());
+    }
+
+    @Test
     void registerShouldRejectExistingEmailRegardlessOfCase() {
         final UserRegisterRequestDTO request = UserRegisterRequestDTO.builder()
                 .email("Existing@Example.com")
