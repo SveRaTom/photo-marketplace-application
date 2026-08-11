@@ -1617,7 +1617,7 @@ textarea.form-control {
     margin: 1.25rem auto 0;
     font-size: 1.05rem;
     font-weight: 600;
-    letter-spacing: 0.2px;
+    letter-spacing: .012em;
     border-radius: 10px;
     text-align: center;
 }
