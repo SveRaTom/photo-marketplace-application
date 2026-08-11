@@ -21,7 +21,9 @@
     <div class="alert-error" role="alert" th:if="${errorMessage != null}" th:text="${errorMessage}"></div>
 
     <section class="bookings-grid" th:if="${!#lists.isEmpty(customOffers)}">
-        <article class="offer-card booking-card" th:each="customOffer : ${customOffers}">
+        <article class="offer-card booking-card"
+                 th:each="customOffer : ${customOffers}"
+                 th:id="${'custom-offer-' + customOffer.id}">
             <div class="offer-card-content">
                 <div class="review-top">
                     <h2>Custom Photography Request</h2>
@@ -46,7 +48,7 @@
             </div>
 
             <div class="offer-actions">
-                <a th:href="@{/offers/{offerId}(offerId=${customOffer.offerId})}"
+                <a th:href="@{/offers/{offerId}(offerId=${customOffer.offerId}, from='client-custom-offers', customOfferId=${customOffer.id})}"
                    class="btn btn-secondary">Original Offer</a>
 
                 <form th:if="${customOffer.status.name() == 'PENDING'}"

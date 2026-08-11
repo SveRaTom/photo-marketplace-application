@@ -21,39 +21,55 @@
     <div class="alert-error" role="alert" th:if="${errorMessage != null}" th:text="${errorMessage}"></div>
 
     <section class="bookings-grid" th:if="${!#lists.isEmpty(customOffers)}">
-        <article class="offer-card booking-card" th:each="customOffer : ${customOffers}">
+        <article class="offer-card booking-card"
+                 th:each="customOffer : ${customOffers}"
+                 th:id="${'custom-offer-' + customOffer.request.id}">
             <div class="offer-card-content">
                 <div class="review-top">
                     <h2>Photography Request</h2>
-                    <span th:class="'status-badge status-' + ${#strings.toLowerCase(customOffer.status.name())}"
-                          th:text="${customOffer.status}"></span>
+                    <span th:class="'status-badge status-' + ${#strings.toLowerCase(customOffer.request.status.name())}"
+                          th:text="${customOffer.request.status}"></span>
+                </div>
+
+                <div class="custom-offer-context">
+                    <div class="custom-offer-context-item">
+                        <span class="custom-offer-context-label">Client</span>
+                        <strong th:text="${customOffer.clientDisplayName}"></strong>
+                    </div>
+                    <div class="custom-offer-context-item">
+                        <span class="custom-offer-context-label">Original offer</span>
+                        <a th:href="@{/offers/{offerId}(offerId=${customOffer.request.offerId}, from='photographer-custom-offers', customOfferId=${customOffer.request.id})}">
+                            <strong th:text="${customOffer.offerTitle}"></strong>
+                            <span th:text="${' · ' + customOffer.originalPrice + ' €'}"></span>
+                        </a>
+                    </div>
                 </div>
 
                 <div class="booking-meta">
                     <span>Event date:
-                        <strong th:text="${#temporals.format(customOffer.eventDate, 'dd MMM yyyy')}"></strong>
+                        <strong th:text="${#temporals.format(customOffer.request.eventDate, 'dd MMM yyyy')}"></strong>
                     </span>
-                    <span>Location: <strong th:text="${customOffer.location}"></strong></span>
-                    <span th:if="${customOffer.proposedPrice != null}">Proposed price:
-                        <strong th:text="${customOffer.proposedPrice + ' €'}"></strong>
+                    <span>Location: <strong th:text="${customOffer.request.location}"></strong></span>
+                    <span th:if="${customOffer.request.proposedPrice != null}">Proposed price:
+                        <strong th:text="${customOffer.request.proposedPrice + ' €'}"></strong>
                     </span>
                     <span>Requested on:
-                        <strong th:text="${#temporals.format(customOffer.createdAt, 'dd MMM yyyy HH:mm')}"></strong>
+                        <strong th:text="${#temporals.format(customOffer.request.createdAt, 'dd MMM yyyy HH:mm')}"></strong>
                     </span>
                 </div>
 
-                <p class="custom-offer-message" th:text="${customOffer.message}"></p>
+                <p class="custom-offer-message" th:text="${customOffer.request.message}"></p>
             </div>
 
-            <div class="custom-offer-decision-actions" th:if="${customOffer.status.name() == 'PENDING'}">
+            <div class="custom-offer-decision-actions" th:if="${customOffer.request.status.name() == 'PENDING'}">
                 <form class="custom-offer-accept-form"
-                      th:action="@{/photographer/custom-offers/{customOfferId}(customOfferId=${customOffer.id})}"
+                      th:action="@{/photographer/custom-offers/{customOfferId}(customOfferId=${customOffer.request.id})}"
                       th:method="put">
                     <input type="hidden" name="decision" value="ACCEPT">
-                    <label th:for="${'proposedPrice-' + customOffer.id}">Proposed price</label>
+                    <label th:for="${'proposedPrice-' + customOffer.request.id}">Proposed price</label>
                     <div class="custom-offer-price-action">
                         <input class="form-control"
-                               th:id="${'proposedPrice-' + customOffer.id}"
+                               th:id="${'proposedPrice-' + customOffer.request.id}"
                                type="number"
                                name="proposedPrice"
                                min="0.01"
@@ -65,7 +81,8 @@
                     </div>
                 </form>
 
-                <form th:action="@{/photographer/custom-offers/{customOfferId}(customOfferId=${customOffer.id})}"
+                <form class="custom-offer-decline-form"
+                      th:action="@{/photographer/custom-offers/{customOfferId}(customOfferId=${customOffer.request.id})}"
                       th:method="put">
                     <input type="hidden" name="decision" value="DECLINE">
                     <button type="submit" class="btn btn-danger"
@@ -77,9 +94,9 @@
                 </form>
             </div>
 
-            <div class="offer-actions">
-                <a th:href="@{/offers/{offerId}(offerId=${customOffer.offerId})}"
-                   class="btn btn-secondary">Original Offer</a>
+            <div class="offer-actions custom-offer-original-action">
+                <a th:href="@{/offers/{offerId}(offerId=${customOffer.request.offerId}, from='photographer-custom-offers', customOfferId=${customOffer.request.id})}"
+                   class="btn btn-secondary">View Original Offer</a>
             </div>
         </article>
     </section>

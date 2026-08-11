@@ -21,6 +21,7 @@ import photomarketplace.model.dto.customoffer.CustomOfferDecisionRequestDTO;
 import photomarketplace.model.dto.customoffer.CustomOfferRequestDTO;
 import photomarketplace.model.dto.customoffer.CustomOfferResponseDTO;
 import photomarketplace.model.dto.customoffer.CustomOfferStatusDTO;
+import photomarketplace.model.dto.customoffer.PhotographerCustomOfferViewDTO;
 import photomarketplace.model.dto.offer.OfferDTO;
 import photomarketplace.model.dto.user.UserDTO;
 import photomarketplace.model.entity.user.User;
@@ -179,6 +180,34 @@ class CustomOfferServiceTest {
                 this.customOfferService.getPhotographerCustomOffers(PHOTOGRAPHER_ID);
 
         assertSame(expectedResponses, actualResponses);
+    }
+
+    @Test
+    void getPhotographerCustomOfferViewsShouldIncludeClientAndOriginalOffer() {
+        final CustomOfferResponseDTO customOffer = response(CustomOfferStatusDTO.PENDING, null);
+        final UserDTO client = UserDTO.builder()
+                .id(CLIENT_ID)
+                .displayName("Maria Petrova")
+                .build();
+        final OfferDTO originalOffer = OfferDTO.builder()
+                .id(OFFER_ID)
+                .title("Outdoor Portrait Session")
+                .price(new BigDecimal("500.00"))
+                .build();
+
+        when(this.userService.getUser(PHOTOGRAPHER_ID)).thenReturn(user(UserRole.PHOTOGRAPHER));
+        when(this.customOfferClient.getForPhotographer(PHOTOGRAPHER_ID)).thenReturn(List.of(customOffer));
+        when(this.userService.getUserById(CLIENT_ID)).thenReturn(client);
+        when(this.offerService.getOfferById(OFFER_ID)).thenReturn(originalOffer);
+
+        final List<PhotographerCustomOfferViewDTO> views =
+                this.customOfferService.getPhotographerCustomOfferViews(PHOTOGRAPHER_ID);
+
+        assertEquals(1, views.size());
+        assertSame(customOffer, views.getFirst().request());
+        assertEquals("Maria Petrova", views.getFirst().clientDisplayName());
+        assertEquals("Outdoor Portrait Session", views.getFirst().offerTitle());
+        assertEquals(new BigDecimal("500.00"), views.getFirst().originalPrice());
     }
 
     @Test

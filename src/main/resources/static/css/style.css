@@ -849,8 +849,46 @@ textarea.form-control {
     overflow-wrap: anywhere;
 }
 
+.custom-offer-context {
+    display: grid;
+    grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+    gap: .75rem;
+    margin: 1rem 0;
+}
+
+.custom-offer-context-item {
+    min-width: 0;
+    padding: .85rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #f8fafc;
+    color: #334155;
+}
+
+.custom-offer-context-label {
+    display: block;
+    margin-bottom: .2rem;
+    color: #64748b;
+    font-size: .82rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.custom-offer-context-item a {
+    color: #1d4ed8;
+    line-height: 1.4;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+
+.custom-offer-context-item a:hover {
+    text-decoration: underline;
+}
+
 .custom-offer-decision-actions {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 120px;
     align-items: flex-end;
     gap: .75rem;
     padding: 0 1.5rem;
@@ -867,12 +905,42 @@ textarea.form-control {
 }
 
 .custom-offer-price-action {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 120px;
     gap: .75rem;
 }
 
 .custom-offer-price-action .form-control {
     min-width: 0;
+    min-height: 54px;
+    font-size: 1.05rem;
+}
+
+.custom-offer-decision-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 54px;
+    padding: 0 20px;
+    font-family: inherit;
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.custom-offer-decline-form {
+    margin: 0;
+}
+
+.custom-offer-original-action {
+    margin-top: 1.25rem;
+}
+
+.custom-offer-original-action .btn {
+    min-height: 54px;
+    font-size: 1.05rem;
+    font-weight: 600;
 }
 
 .review-top {
@@ -1466,6 +1534,15 @@ textarea.form-control {
 }
 
 @media (max-width: 520px) {
+    .custom-offer-context,
+    .custom-offer-decision-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .custom-offer-original-action .btn {
+        width: 100%;
+    }
+
     .error-container {
         padding: 2rem 1.35rem;
     }

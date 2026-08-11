@@ -35,7 +35,7 @@ public class PhotographerCustomOfferController {
         try {
             modelAndView.addObject(
                     "customOffers",
-                    this.customOfferService.getPhotographerCustomOffers(getUserId(httpSession)));
+                    this.customOfferService.getPhotographerCustomOfferViews(getUserId(httpSession)));
         } catch (CustomOfferException exception) {
             modelAndView.addObject("customOffers", List.of());
             modelAndView.addObject("errorMessage", exception.getMessage());

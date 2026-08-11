@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
+import photomarketplace.model.dto.offer.OfferDTO;
 import photomarketplace.model.dto.offer.OfferRequestDTO;
 import photomarketplace.security.MarketplaceSession;
 import photomarketplace.service.offer.OfferService;
@@ -20,6 +22,9 @@ import java.util.UUID;
 @Controller
 @RequestMapping
 public class OfferController {
+
+    private static final String PHOTOGRAPHER_CUSTOM_OFFERS_SOURCE = "photographer-custom-offers";
+    private static final String CLIENT_CUSTOM_OFFERS_SOURCE = "client-custom-offers";
 
     private final OfferService offerService;
 
@@ -37,9 +42,20 @@ public class OfferController {
     }
 
     @GetMapping("/offers/{id}")
-    public ModelAndView getOfferDetails(@PathVariable final UUID id) {
+    public ModelAndView getOfferDetails(
+            @PathVariable final UUID id,
+            @RequestParam(required = false) final String from,
+            @RequestParam(required = false) final UUID customOfferId,
+            final HttpSession httpSession) {
+
+        final OfferDTO offer = this.offerService.getOfferById(id);
         final ModelAndView modelAndView = new ModelAndView("offer-details");
-        modelAndView.addObject("offer", this.offerService.getOfferById(id));
+        modelAndView.addObject("offer", offer);
+        modelAndView.addObject("backUrl", resolveOfferDetailsBackUrl(
+                from,
+                customOfferId,
+                offer,
+                getUserId(httpSession)));
 
         return modelAndView;
     }
@@ -122,5 +138,28 @@ public class OfferController {
 
     private static UUID getUserId(final HttpSession httpSession) {
         return (UUID) httpSession.getAttribute(MarketplaceSession.USER_ID);
+    }
+
+    private static String resolveOfferDetailsBackUrl(
+            final String from,
+            final UUID customOfferId,
+            final OfferDTO offer,
+            final UUID userId) {
+
+        if (PHOTOGRAPHER_CUSTOM_OFFERS_SOURCE.equals(from)) {
+            return customOfferId == null
+                    ? "/photographer/custom-offers"
+                    : "/photographer/custom-offers#custom-offer-" + customOfferId;
+        }
+
+        if (CLIENT_CUSTOM_OFFERS_SOURCE.equals(from)) {
+            return customOfferId == null
+                    ? "/custom-offers"
+                    : "/custom-offers#custom-offer-" + customOfferId;
+        }
+
+        return userId != null && userId.equals(offer.getPhotographer().getId())
+                ? "/my-offers"
+                : "/offers";
     }
 }

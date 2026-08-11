@@ -21,7 +21,9 @@ import photomarketplace.model.dto.customoffer.CustomOfferDecisionDTO;
 import photomarketplace.model.dto.customoffer.CustomOfferDecisionRequestDTO;
 import photomarketplace.model.dto.customoffer.CustomOfferRequestDTO;
 import photomarketplace.model.dto.customoffer.CustomOfferResponseDTO;
+import photomarketplace.model.dto.customoffer.PhotographerCustomOfferViewDTO;
 import photomarketplace.model.dto.offer.OfferDTO;
+import photomarketplace.model.dto.user.UserDTO;
 import photomarketplace.model.entity.user.User;
 import photomarketplace.model.entity.user.UserRole;
 import photomarketplace.service.offer.OfferService;
@@ -97,6 +99,12 @@ public class CustomOfferService {
         return execute(() -> this.customOfferClient.getForPhotographer(photographerId));
     }
 
+    public List<PhotographerCustomOfferViewDTO> getPhotographerCustomOfferViews(final UUID photographerId) {
+        return getPhotographerCustomOffers(photographerId).stream()
+                .map(this::toPhotographerView)
+                .toList();
+    }
+
     public CustomOfferResponseDTO decideCustomOffer(
             final UUID customOfferId,
             final UUID photographerId,
@@ -164,6 +172,17 @@ public class CustomOfferService {
 
             throw new CustomOfferOperationException("An accepted custom offer must include a positive price.");
         }
+    }
+
+    private PhotographerCustomOfferViewDTO toPhotographerView(final CustomOfferResponseDTO customOffer) {
+        final UserDTO client = this.userService.getUserById(customOffer.clientId());
+        final OfferDTO offer = this.offerService.getOfferById(customOffer.offerId());
+
+        return new PhotographerCustomOfferViewDTO(
+                customOffer,
+                client.getDisplayName(),
+                offer.getTitle(),
+                offer.getPrice());
     }
 
     private <T> T execute(final Supplier<T> clientCall) {

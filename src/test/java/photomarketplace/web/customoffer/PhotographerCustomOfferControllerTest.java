@@ -17,6 +17,7 @@ import photomarketplace.model.dto.customoffer.CustomOfferDecisionDTO;
 import photomarketplace.model.dto.customoffer.CustomOfferDecisionRequestDTO;
 import photomarketplace.model.dto.customoffer.CustomOfferResponseDTO;
 import photomarketplace.model.dto.customoffer.CustomOfferStatusDTO;
+import photomarketplace.model.dto.customoffer.PhotographerCustomOfferViewDTO;
 import photomarketplace.service.customoffer.CustomOfferService;
 
 import java.math.BigDecimal;
@@ -71,9 +72,9 @@ class PhotographerCustomOfferControllerTest {
 
     @Test
     void getPhotographerCustomOffersShouldReturnPopulatedPage() throws Exception {
-        final List<CustomOfferResponseDTO> customOffers = List.of(customOffer());
+        final List<PhotographerCustomOfferViewDTO> customOffers = List.of(customOfferView());
 
-        when(this.customOfferService.getPhotographerCustomOffers(PHOTOGRAPHER_ID)).thenReturn(customOffers);
+        when(this.customOfferService.getPhotographerCustomOfferViews(PHOTOGRAPHER_ID)).thenReturn(customOffers);
 
         this.mockMvc.perform(get("/photographer/custom-offers").session(photographerSession()))
                 .andExpect(status().isOk())
@@ -83,7 +84,7 @@ class PhotographerCustomOfferControllerTest {
 
     @Test
     void getPhotographerCustomOffersShouldShowServiceErrorAndEmptyList() throws Exception {
-        when(this.customOfferService.getPhotographerCustomOffers(PHOTOGRAPHER_ID))
+        when(this.customOfferService.getPhotographerCustomOfferViews(PHOTOGRAPHER_ID))
                 .thenThrow(new CustomOfferServiceUnavailableException("Custom offers are temporarily unavailable."));
 
         this.mockMvc.perform(get("/photographer/custom-offers").session(photographerSession()))
@@ -188,5 +189,13 @@ class PhotographerCustomOfferControllerTest {
                 CustomOfferStatusDTO.PENDING,
                 LocalDateTime.of(2026, 8, 7, 10, 30),
                 LocalDateTime.of(2026, 8, 7, 10, 30));
+    }
+
+    private static PhotographerCustomOfferViewDTO customOfferView() {
+        return new PhotographerCustomOfferViewDTO(
+                customOffer(),
+                "Maria Petrova",
+                "Outdoor Portrait Session",
+                new BigDecimal("500.00"));
     }
 }
