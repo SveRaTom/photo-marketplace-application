@@ -6,11 +6,16 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import photomarketplace.service.customoffer.CustomOfferService;
 
+import java.util.List;
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -28,6 +33,9 @@ class SecurityIntegrationTests {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockitoBean
+    private CustomOfferService customOfferService;
 
     @Test
     void publicLandingPageIsAccessibleWithoutAuthentication() throws Exception {
@@ -178,6 +186,8 @@ class SecurityIntegrationTests {
     @Test
     void photographerCanAccessAndRenderDashboard() throws Exception {
         final MockHttpSession photographerSession = login("photographer@example.com", "testPhotographerPassword");
+
+        when(this.customOfferService.getPhotographerCustomOffers(any(UUID.class))).thenReturn(List.of());
 
         this.mockMvc.perform(get("/dashboard").session(photographerSession))
                 .andExpect(status().isOk())

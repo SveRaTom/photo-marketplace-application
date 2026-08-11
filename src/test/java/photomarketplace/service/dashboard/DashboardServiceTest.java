@@ -6,6 +6,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import photomarketplace.model.dto.booking.BookingDTO;
+import photomarketplace.model.dto.customoffer.CustomOfferResponseDTO;
+import photomarketplace.model.dto.customoffer.CustomOfferStatusDTO;
 import photomarketplace.model.dto.dashboard.PhotographerDashboardDTO;
 import photomarketplace.model.dto.offer.OfferDTO;
 import photomarketplace.model.dto.review.ReviewDTO;
@@ -13,6 +15,7 @@ import photomarketplace.model.dto.user.UserDTO;
 import photomarketplace.model.entity.booking.BookingStatus;
 import photomarketplace.model.entity.user.UserRole;
 import photomarketplace.service.booking.BookingService;
+import photomarketplace.service.customoffer.CustomOfferService;
 import photomarketplace.service.offer.OfferService;
 import photomarketplace.service.review.ReviewService;
 import photomarketplace.service.user.UserService;
@@ -45,6 +48,9 @@ class DashboardServiceTest {
     private BookingService bookingService;
 
     @Mock
+    private CustomOfferService customOfferService;
+
+    @Mock
     private ReviewService reviewService;
 
     private DashboardService dashboardService;
@@ -55,6 +61,7 @@ class DashboardServiceTest {
                 this.userService,
                 this.offerService,
                 this.bookingService,
+                this.customOfferService,
                 this.reviewService
         );
     }
@@ -90,15 +97,19 @@ class DashboardServiceTest {
         when(this.offerService.getOffersByPhotographer(PHOTOGRAPHER_ID)).thenReturn(List.of(
                 offer(PHOTOGRAPHER_ID, true),
                 offer(PHOTOGRAPHER_ID, true),
-                offer(PHOTOGRAPHER_ID, false))
-        );
+                offer(PHOTOGRAPHER_ID, false)
+        ));
         when(this.bookingService.getBookingsForUser(PHOTOGRAPHER_ID)).thenReturn(List.of(
                 pendingBooking,
                 approvedBooking,
                 pastPendingBooking,
                 cancelledBooking,
-                booking(OTHER_PHOTOGRAPHER_ID, LocalDate.now().plusDays(1), BookingStatus.PENDING))
-        );
+                booking(OTHER_PHOTOGRAPHER_ID, LocalDate.now().plusDays(1), BookingStatus.PENDING)
+        ));
+        when(this.customOfferService.getPhotographerCustomOffers(PHOTOGRAPHER_ID)).thenReturn(List.of(
+                customOffer(CustomOfferStatusDTO.PENDING),
+                customOffer(CustomOfferStatusDTO.ACCEPTED)
+        ));
         when(this.reviewService.getReviewsForUser(PHOTOGRAPHER_ID)).thenReturn(List.of(
                 olderReview,
                 newestReview,
@@ -109,8 +120,8 @@ class DashboardServiceTest {
                         .rating(1)
                         .offer(OfferDTO.builder().build())
                         .createdAt(LocalDateTime.now())
-                        .build())
-        );
+                        .build()
+        ));
 
         final PhotographerDashboardDTO dashboard =
                 this.dashboardService.getPhotographerDashboard(PHOTOGRAPHER_ID);
@@ -119,7 +130,7 @@ class DashboardServiceTest {
         assertEquals(3, dashboard.getTotalOffers());
         assertEquals(2, dashboard.getAvailableOffers());
         assertEquals(4, dashboard.getTotalBookings());
-        assertEquals(2, dashboard.getPendingBookings());
+        assertEquals(3, dashboard.getPendingRequests());
         assertEquals(new BigDecimal("4.0"), dashboard.getAverageRating());
         assertEquals(List.of(approvedBooking, pendingBooking), dashboard.getUpcomingBookings());
         assertEquals(List.of(newestReview, olderReview, undatedReview), dashboard.getRecentReviews());
@@ -132,6 +143,7 @@ class DashboardServiceTest {
         when(this.userService.getUserById(PHOTOGRAPHER_ID)).thenReturn(photographer);
         when(this.offerService.getOffersByPhotographer(PHOTOGRAPHER_ID)).thenReturn(List.of());
         when(this.bookingService.getBookingsForUser(PHOTOGRAPHER_ID)).thenReturn(List.of());
+        when(this.customOfferService.getPhotographerCustomOffers(PHOTOGRAPHER_ID)).thenReturn(List.of());
         when(this.reviewService.getReviewsForUser(PHOTOGRAPHER_ID)).thenReturn(List.of());
 
         final PhotographerDashboardDTO dashboard =
@@ -140,7 +152,7 @@ class DashboardServiceTest {
         assertEquals(0, dashboard.getTotalOffers());
         assertEquals(0, dashboard.getAvailableOffers());
         assertEquals(0, dashboard.getTotalBookings());
-        assertEquals(0, dashboard.getPendingBookings());
+        assertEquals(0, dashboard.getPendingRequests());
         assertEquals(new BigDecimal("0.0"), dashboard.getAverageRating());
         assertEquals(List.of(), dashboard.getUpcomingBookings());
         assertEquals(List.of(), dashboard.getRecentReviews());
@@ -157,7 +169,7 @@ class DashboardServiceTest {
 
         assertEquals("The dashboard is available only to photographers.", exception.getMessage());
 
-        verifyNoInteractions(this.offerService, this.bookingService, this.reviewService);
+        verifyNoInteractions(this.offerService, this.bookingService, this.customOfferService, this.reviewService);
     }
 
     private static UserDTO photographer(final UUID photographerId, final UserRole role) {
@@ -201,5 +213,20 @@ class DashboardServiceTest {
                 .offer(offer(photographerId, true))
                 .createdAt(createdAt)
                 .build();
+    }
+
+    private static CustomOfferResponseDTO customOffer(final CustomOfferStatusDTO status) {
+        return new CustomOfferResponseDTO(
+                UUID.randomUUID(),
+                UUID.randomUUID(),
+                PHOTOGRAPHER_ID,
+                UUID.randomUUID(),
+                LocalDate.now().plusDays(1),
+                "Sofia",
+                "Photography request",
+                null,
+                status,
+                LocalDateTime.now(),
+                LocalDateTime.now());
     }
 }

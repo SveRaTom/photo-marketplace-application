@@ -3,6 +3,7 @@ package photomarketplace.service.dashboard;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import photomarketplace.model.dto.booking.BookingDTO;
+import photomarketplace.model.dto.customoffer.CustomOfferStatusDTO;
 import photomarketplace.model.dto.dashboard.PhotographerDashboardDTO;
 import photomarketplace.model.dto.offer.OfferDTO;
 import photomarketplace.model.dto.review.ReviewDTO;
@@ -10,6 +11,7 @@ import photomarketplace.model.dto.user.UserDTO;
 import photomarketplace.model.entity.booking.BookingStatus;
 import photomarketplace.model.entity.user.UserRole;
 import photomarketplace.service.booking.BookingService;
+import photomarketplace.service.customoffer.CustomOfferService;
 import photomarketplace.service.offer.OfferService;
 import photomarketplace.service.review.ReviewService;
 import photomarketplace.service.user.UserService;
@@ -31,6 +33,7 @@ public class DashboardService {
     private final UserService userService;
     private final OfferService offerService;
     private final BookingService bookingService;
+    private final CustomOfferService customOfferService;
     private final ReviewService reviewService;
 
     public PhotographerDashboardDTO getPhotographerDashboard(final UUID photographerId) {
@@ -44,6 +47,9 @@ public class DashboardService {
         final List<BookingDTO> bookings = this.bookingService.getBookingsForUser(photographerId).stream()
                 .filter(booking -> photographerId.equals(booking.getPhotographerId()))
                 .toList();
+        final long pendingCustomOffers = this.customOfferService.getPhotographerCustomOffers(photographerId).stream()
+                .filter(customOffer -> customOffer.status() == CustomOfferStatusDTO.PENDING)
+                .count();
         final List<ReviewDTO> receivedReviews = this.reviewService.getReviewsForUser(photographerId).stream()
                 .filter(review -> review.getOffer() != null
                         && review.getOffer().getPhotographer() != null
@@ -55,7 +61,7 @@ public class DashboardService {
                 .totalOffers(offers.size())
                 .availableOffers(offers.stream().filter(OfferDTO::isAvailable).count())
                 .totalBookings(bookings.size())
-                .pendingBookings(bookings.stream()
+                .pendingRequests(pendingCustomOffers + bookings.stream()
                         .filter(booking -> booking.getStatus() == BookingStatus.PENDING)
                         .count())
                 .averageRating(calculateAverageRating(receivedReviews))

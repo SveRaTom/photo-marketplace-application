@@ -17,7 +17,7 @@ public class PhotographerDashboardDTO {
     private long totalOffers;
     private long availableOffers;
     private long totalBookings;
-    private long pendingBookings;
+    private long pendingRequests;
     private BigDecimal averageRating;
     private List<BookingDTO> upcomingBookings;
     private List<ReviewDTO> recentReviews;
