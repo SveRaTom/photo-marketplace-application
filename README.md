@@ -1,4 +1,4 @@
-# Photographer Portfolio Marketplace
+# LensMarket — Photographer Portfolio Marketplace
 
 ## Overview
 
@@ -117,6 +117,8 @@ Public, authenticated, and role-protected endpoints are configured separately. O
 - A photographer accepts the request with a proposed price or declines it
 - A client withdraws a pending request
 - Both roles can view their relevant custom offer requests
+- Each request identifies its original offer and, for photographers, the requesting client
+- Opening the original offer preserves the return path to the exact request on the relevant custom-offers page
 - All custom offer state is persisted by the separate REST microservice
 
 ### User Management
@@ -147,16 +149,16 @@ The model includes JPA relationships between users, offers, photos, bookings, an
 
 ## REST Microservice API
 
-The custom-offer service exposes this API. The main application consumes the create, list, decision, and withdrawal operations through `CustomOfferClient`:
+The custom-offer service exposes this API. The main application uses `CustomOfferClient` to create and list requests, record decisions, and withdraw pending requests:
 
-| Method | Endpoint | Purpose |
-| --- | --- | --- |
-| `POST` | `/api/custom-offers` | Create a custom offer request |
-| `GET` | `/api/custom-offers/{customOfferId}` | Retrieve one request |
-| `GET` | `/api/custom-offers?clientId={clientId}` | Retrieve a client's requests |
-| `GET` | `/api/custom-offers?photographerId={photographerId}` | Retrieve a photographer's requests |
-| `PUT` | `/api/custom-offers/{customOfferId}/decision?photographerId={photographerId}` | Accept or decline a pending request |
-| `DELETE` | `/api/custom-offers/{customOfferId}?clientId={clientId}` | Withdraw a pending request |
+| Method   | Endpoint                                                                      | Purpose                             |
+|----------|-------------------------------------------------------------------------------|-------------------------------------|
+| `POST`   | `/api/custom-offers`                                                          | Create a custom offer request       |
+| `GET`    | `/api/custom-offers/{customOfferId}`                                          | Retrieve one request                |
+| `GET`    | `/api/custom-offers?clientId={clientId}`                                      | Retrieve a client's requests        |
+| `GET`    | `/api/custom-offers?photographerId={photographerId}`                          | Retrieve a photographer's requests  |
+| `PUT`    | `/api/custom-offers/{customOfferId}/decision?photographerId={photographerId}` | Accept or decline a pending request |
+| `DELETE` | `/api/custom-offers/{customOfferId}?clientId={clientId}`                      | Withdraw a pending request          |
 
 The microservice returns JSON responses and meaningful validation, not-found, and invalid-operation errors. The main application translates integration failures into user-facing MVC error pages or form messages.
 
@@ -224,11 +226,11 @@ the microservice at `http://localhost:8081` unless `CUSTOM_OFFER_SERVICE_URL` ov
 
 When an account is missing and its password is configured, the application seeds one account for each role:
 
-| Role | Username | Email |
-| --- | --- | --- |
-| Photographer | `photographer` | `photographer@example.com` |
-| Client | `client` | `client@example.com` |
-| Administrator | `administrator` | `admin@example.com` |
+| Role          | Username        | Email                      |
+|---------------|-----------------|----------------------------|
+| Photographer  | `photographer`  | `photographer@example.com` |
+| Client        | `client`        | `client@example.com`       |
+| Administrator | `administrator` | `admin@example.com`        |
 
 Seed passwords are read from configuration and stored BCrypt-hashed in the database. Accounts with missing or blank
 seed passwords are not created. Do not commit real database or account passwords.
@@ -271,7 +273,7 @@ Then start the main application in another terminal:
 mvn spring-boot:run
 ```
 
-Open the main application at `http://localhost:8080`. The custom-offer API and health endpoint are available on port `8081` by default.
+Open the main application at `http://localhost:8080`. The custom-offer API is available on port `8081` by default, with service health reported at `http://localhost:8081/actuator/health`.
 
 To run packaged JARs instead, use:
 
@@ -309,7 +311,7 @@ Coverage reports are generated at:
 - `/profile` - authenticated user's profile
 - `/my-offers` - photographer's offers
 - `/portfolio` - photographer's photos
-- `/my-bookings` - current user's bookings
+- `/bookings` - current user's bookings
 - `/reviews` - reviews relevant to the current user
 - `/custom-offers` - client's custom requests
 - `/photographer/custom-offers` - photographer's custom requests
