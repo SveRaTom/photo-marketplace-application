@@ -734,6 +734,20 @@ textarea.form-control {
     vertical-align: middle;
 }
 
+.admin-users-table .account-status,
+.admin-users-table .role-badge,
+.admin-users-table .current-account-label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 0 .9rem;
+    border-radius: 999px;
+    font-size: .9rem;
+    font-weight: 600;
+    line-height: 1;
+}
+
 .admin-username {
     display: block;
     margin-top: .25rem;
@@ -768,15 +782,32 @@ textarea.form-control {
 .role-management-form {
     display: flex;
     align-items: center;
-    gap: .75rem;
-    min-width: 310px;
+    gap: .625rem;
+    min-width: 345px;
 }
 
 .role-management-form .form-control {
-    min-width: 150px;
+    flex: 0 0 190px;
+    width: 190px;
+    min-width: 190px;
+    min-height: 46px;
+    padding: 0 42px 0 16px;
+    font-size: .9rem;
+    font-weight: 600;
+    line-height: 1;
 }
 
 .role-management-form .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 145px;
+    min-height: 46px;
+    padding: 0 18px;
+    font-family: inherit;
+    font-size: .9rem;
+    font-weight: 600;
+    line-height: 1;
     white-space: nowrap;
 }
 
